@@ -27,7 +27,7 @@
 			"id": "html-css-layout",
 			"title": "HTML/CSS layout with inputs and swap button",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "index.html + src/main.ts + src/style.css. Title/header, LSCOLORS text input (maxlength 22), LS_COLORS textarea, swap/convert direction indicator, error/validation containers, clean minimal monospace design."
 		},
 		{

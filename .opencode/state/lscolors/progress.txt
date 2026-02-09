@@ -9,6 +9,8 @@ Started: 2026-02-09
 - **Vite base**: `/lscolors/` for GitHub Pages
 - **Vitest**: needs at least 1 test file or exits 1
 - **VCS**: jj (colocated with git), default branch `master`
+- **DOM helpers**: Use `instanceof` checks instead of `as T` casts (e.g. `getInput`, `getTextarea`, `getButton`, `getSpan`)
+- **Formatter**: dprint (run `bun run format`)
 
 ---
 
@@ -30,3 +32,10 @@ Started: 2026-02-09
 - Edge cases: empty input, all-default, invalid chars, trailing colons, non-overlapping keys, bold ignored, default fg/bg codes (39/49), bright colors
 - Files: src/lscolors.test.ts (replaced placeholder)
 - **Learnings:** none new
+
+## Task - html-css-layout
+- HTML layout: header, LSCOLORS input (maxlength 22), LS_COLORS textarea, swap button with direction indicator, error containers with aria-live, preview placeholder div
+- CSS: dark monospace theme, CSS custom properties for theming, focus states, clean minimal design
+- main.ts: swap button toggles direction state, typed DOM helpers using instanceof (no `as` casts), inputs wired up for next task (live-conversion)
+- Files: index.html (rewritten), src/style.css (new), src/main.ts (rewritten)
+- **Learnings:** Avoid `as T` for DOM elements — use `instanceof` narrowing for type-safe DOM access without assertions

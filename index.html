@@ -4,9 +4,72 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>LSCOLORS ↔ LS_COLORS Converter</title>
+		<link rel="stylesheet" href="/src/style.css">
 	</head>
 	<body>
-		<div id="app"></div>
+		<main id="app">
+			<header>
+				<h1>LSCOLORS <span class="arrow">↔</span> LS_COLORS</h1>
+				<p class="subtitle">
+					Convert between macOS/BSD and GNU dircolors formats
+				</p>
+			</header>
+
+			<div class="converter">
+				<div class="field field--lscolors">
+					<label for="lscolors-input">LSCOLORS <span class="label-hint"
+						>(BSD/macOS, 22 chars)</span></label>
+					<input
+						id="lscolors-input"
+						type="text"
+						maxlength="22"
+						spellcheck="false"
+						autocomplete="off"
+						placeholder="exfxcxdxbxegedabagacad"
+					>
+					<div
+						id="lscolors-error"
+						class="error"
+						role="alert"
+						aria-live="polite"
+					>
+					</div>
+				</div>
+
+				<div class="swap-container">
+					<button
+						id="swap-btn"
+						type="button"
+						aria-label="Swap conversion direction"
+					>
+						<span class="swap-icon" aria-hidden="true">⇅</span>
+					</button>
+					<span id="direction-indicator" class="direction"
+					>LSCOLORS → LS_COLORS</span>
+				</div>
+
+				<div class="field field--ls-colors">
+					<label for="ls-colors-input">LS_COLORS <span class="label-hint"
+						>(GNU dircolors)</span></label>
+					<textarea
+						id="ls-colors-input"
+						rows="4"
+						spellcheck="false"
+						autocomplete="off"
+						placeholder="di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43"
+					></textarea>
+					<div
+						id="ls-colors-error"
+						class="error"
+						role="alert"
+						aria-live="polite"
+					>
+					</div>
+				</div>
+			</div>
+
+			<div id="preview" class="preview"></div>
+		</main>
 		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>
