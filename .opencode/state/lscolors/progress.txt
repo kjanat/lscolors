@@ -3,7 +3,7 @@ PRD: lscolors
 Started: 2026-02-09
 
 ## Codebase Patterns
-- **Build**: `npm run build` (tsc + vite build), `npm test` (vitest run)
+- **PM**: bun (not npm). Use `bun run build`, `bun test`, `bun install`
 - **Strict TS**: noUncheckedIndexedAccess, exactOptionalPropertyTypes, no any
 - **exactOptionalPropertyTypes**: can't return `{ prop: undefined }` for `prop?: T` — must conditionally assign
 - **Vite base**: `/lscolors/` for GitHub Pages
@@ -23,3 +23,10 @@ Started: 2026-02-09
 - Tightened vs user-provided code: char validation, noUncheckedIndexedAccess guards, exactOptionalPropertyTypes-safe Style construction, readonly arrays/tuples, exported xterm256ToRgb + BSD_SLOT_LABELS for UI use later
 - Files: src/lscolors.ts (new)
 - **Learnings:** exactOptionalPropertyTypes requires conditionally assigning optional props instead of `{ prop: maybeUndefined }`
+
+## Task - unit-tests
+- 61 tests across 10 describe blocks covering all public API
+- Coverage: parseSgr/stringifySgr, parseLsColors/stringifyLsColors, parseLscolors/stringifyLscolors, isValidBsdChar, lscolorsToLsColors, lsColorsToLscolors, round-trip identity, xterm256ToRgb, 256-color approximation
+- Edge cases: empty input, all-default, invalid chars, trailing colons, non-overlapping keys, bold ignored, default fg/bg codes (39/49), bright colors
+- Files: src/lscolors.test.ts (replaced placeholder)
+- **Learnings:** none new

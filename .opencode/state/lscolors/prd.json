@@ -20,7 +20,7 @@
 			"id": "unit-tests",
 			"title": "Unit tests for converter module",
 			"category": "architecture",
-			"passes": false,
+			"passes": true,
 			"details": "Vitest tests covering: parseLscolors valid/invalid, stringifyLscolors round-trip, LSCOLORS→LS_COLORS with known defaults, LS_COLORS→LSCOLORS reverse, 256-color approximation, edge cases (empty, all-default, bold/underline ignored), round-trip identity for basic colors."
 		},
 		{
