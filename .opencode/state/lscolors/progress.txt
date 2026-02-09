@@ -11,6 +11,8 @@ Started: 2026-02-09
 - **VCS**: jj (colocated with git), default branch `master`
 - **DOM helpers**: Use `instanceof` checks instead of `as T` casts (e.g. `getInput`, `getTextarea`, `getButton`, `getSpan`)
 - **Formatter**: dprint (run `bun run format`)
+- **ES2023.Array**: Added to tsconfig lib for `findLast()` support without bumping full target
+- **gnu2bsd.py reference**: scripts/gnu2bsd.py is the behavioral spec for GNU→BSD conversion
 
 ---
 
@@ -82,3 +84,13 @@ Started: 2026-02-09
 - Existing layout was already column-based (`.converter` flex-column) — no structural changes needed
 - Files: src/style.css
 - **Learnings:** CSS `nth-child` selectors needed to hide thead cells matching hidden tbody cells; `text-size-adjust` needs both `-webkit-` prefix and unprefixed for cross-browser
+
+## Task - converter-accuracy
+- Fixed 3 behavioral gaps vs gnu2bsd reference in LS_COLORS→LSCOLORS conversion
+- Bold (01) → uppercase: `ansiStyleToBsdFgChar` now checks `st.codes.includes(1)` and uppercases fg char (also for 256-color path)
+- Last-wins: replaced `.find()` with `.findLast()` in both `ansiStyleToBsdFgChar` and `ansiStyleToBsdBgChar` — added `ES2023.Array` to tsconfig lib
+- Reverse video (07): `lsColorsToLscolors` swaps fg/bg chars when `st.codes.includes(7)` — swap happens after bold is applied to original fg
+- Added 7 new tests, updated 1 existing test (bold now produces uppercase). 68 tests total, all pass.
+- Updated README: limitations section now documents these as supported features
+- Files: src/lscolors.ts, src/lscolors.test.ts, tsconfig.json, README.md
+- **Learnings:** Bold applies before reverse-video swap (bold uppercases original fg, then swap moves chars). `findLast` requires ES2023.Array lib entry, can add granularly without bumping full target.

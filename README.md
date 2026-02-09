@@ -58,12 +58,11 @@ This tool converts between them in both directions with live preview.
 - **256-color approximation**: Mapped to nearest of the 16 basic ANSI colors.
   Close enough for a preview, not pixel-perfect.
 - **Only the 11 overlapping keys** are preserved when converting GNU to BSD.
-- **Bold (01) not mapped to uppercase**: GNU `01;34` (bold blue) does not
-  produce uppercase `E` in the BSD output. The bold attribute is ignored; only
-  the color code determines the BSD char.
-- **No last-wins overriding**: If multiple fg codes appear (e.g. `34;35`), the
-  first match is used, not the last.
-- **Reverse video (07) ignored**: ANSI code 7 (swap fg/bg) is not handled.
+- **Bold (01) maps to uppercase**: GNU `01;34` (bold blue) produces uppercase
+  `E` in the BSD output, matching BSD convention.
+- **Last-wins overriding**: If multiple fg/bg codes appear (e.g. `34;35`), the
+  last code wins, consistent with terminal behavior.
+- **Reverse video (07)**: ANSI code 7 swaps fg/bg in the BSD output.
 
 ## Why?
 

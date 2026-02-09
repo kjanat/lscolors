@@ -296,10 +296,23 @@ describe('lsColorsToLscolors', () => {
 		expect(map.get('ex')).toEqual({ fg: 'c', bg: 'x' });
 	});
 
-	it('converts bold+color (ignores bold, keeps color)', () => {
+	it('converts bold+color to uppercase BSD char', () => {
 		const result = lsColorsToLscolors('di=01;34');
 		const map = parseLscolors(result);
-		expect(map.get('di')?.fg).toBe('e');
+		expect(map.get('di')?.fg).toBe('E');
+	});
+
+	it('bold without color produces default (no uppercase x)', () => {
+		const result = lsColorsToLscolors('di=01');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.fg).toBe('x');
+	});
+
+	it('bold + 256-color produces uppercase', () => {
+		// 38;5;4 = blue (index 4), bold should uppercase
+		const result = lsColorsToLscolors('di=01;38;5;4');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.fg).toBe('E');
 	});
 
 	it('converts background colors', () => {
@@ -350,6 +363,41 @@ describe('lsColorsToLscolors', () => {
 		const result = lsColorsToLscolors('di=34;48;5;4');
 		const map = parseLscolors(result);
 		expect(map.get('di')?.bg).toBe('e');
+	});
+
+	it('last fg code wins when multiple present', () => {
+		// 34 (blue) then 35 (magenta) → magenta wins
+		const result = lsColorsToLscolors('di=34;35');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.fg).toBe('f');
+	});
+
+	it('last bg code wins when multiple present', () => {
+		// 42 (green bg) then 44 (blue bg) → blue wins
+		const result = lsColorsToLscolors('di=34;42;44');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.bg).toBe('e');
+	});
+
+	it('reverse video (07) swaps fg and bg', () => {
+		// blue fg + green bg + reverse → fg=green bg=blue → 'ce'
+		const result = lsColorsToLscolors('di=34;42;7');
+		const map = parseLscolors(result);
+		expect(map.get('di')).toEqual({ fg: 'c', bg: 'e' });
+	});
+
+	it('reverse video with bold swaps after bold applied to fg', () => {
+		// bold + blue fg + green bg + reverse → bold makes fg 'E', swap → fg='c' bg='E'
+		const result = lsColorsToLscolors('di=01;34;42;7');
+		const map = parseLscolors(result);
+		expect(map.get('di')).toEqual({ fg: 'c', bg: 'E' });
+	});
+
+	it('reverse video with no bg swaps to default', () => {
+		// blue fg + reverse → fg=default bg=blue → 'xe'
+		const result = lsColorsToLscolors('di=34;7');
+		const map = parseLscolors(result);
+		expect(map.get('di')).toEqual({ fg: 'x', bg: 'e' });
 	});
 
 	it('handles default fg code (39)', () => {

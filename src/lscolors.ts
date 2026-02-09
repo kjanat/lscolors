@@ -285,8 +285,12 @@ export function lsColorsToLscolors(
 			continue;
 		}
 
-		const fgChar = ansiStyleToBsdFgChar(st);
-		const bgChar = ansiStyleToBsdBgChar(st);
+		let fgChar = ansiStyleToBsdFgChar(st);
+		let bgChar = ansiStyleToBsdBgChar(st);
+		// Reverse video (07): swap fg and bg
+		if (st.codes.includes(7)) {
+			[fgChar, bgChar] = [bgChar, fgChar];
+		}
 		out.set(slot, { fg: fgChar, bg: bgChar });
 	}
 
@@ -298,12 +302,20 @@ export function lsColorsToLscolors(
 // -------------------------
 
 function ansiStyleToBsdFgChar(st: Style): string {
-	const basic = st.codes.find((c) => (c >= 30 && c <= 37) || (c >= 90 && c <= 97));
-	if (basic !== undefined) return ansiFgToBsdChar(basic);
+	// Last-wins: use findLast so later codes override earlier ones (e.g. 34;35 → magenta)
+	const basic = st.codes.findLast((c) => (c >= 30 && c <= 37) || (c >= 90 && c <= 97));
+	if (basic !== undefined) {
+		let ch = ansiFgToBsdChar(basic);
+		// Bold (01) → uppercase BSD char (e.g. bold blue 01;34 → 'E')
+		if (st.codes.includes(1) && ch !== 'x') ch = ch.toUpperCase();
+		return ch;
+	}
 
 	if (st.fg256 !== undefined) {
 		const approx = approx256ToAnsi16Fg(st.fg256);
-		return ansiFgToBsdChar(approx);
+		let ch = ansiFgToBsdChar(approx);
+		if (st.codes.includes(1) && ch !== 'x') ch = ch.toUpperCase();
+		return ch;
 	}
 
 	// 39 = default fg
@@ -312,7 +324,8 @@ function ansiStyleToBsdFgChar(st: Style): string {
 }
 
 function ansiStyleToBsdBgChar(st: Style): string {
-	const basic = st.codes.find((c) => (c >= 40 && c <= 47) || (c >= 100 && c <= 107));
+	// Last-wins: use findLast so later codes override earlier ones
+	const basic = st.codes.findLast((c) => (c >= 40 && c <= 47) || (c >= 100 && c <= 107));
 	if (basic !== undefined) return ansiBgToBsdChar(basic);
 
 	if (st.bg256 !== undefined) {
