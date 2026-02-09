@@ -55,3 +55,12 @@ Started: 2026-02-09
 - Empty input clears the other field and errors
 - Files: src/main.ts (rewritten)
 - **Learnings:** Converter's `parseLsColors` is lenient (skips bad entries) while `parseLscolors` throws on invalid input — different error handling paths needed per direction
+
+## Task - color-preview
+- Added `bsdCharToCssColor`, `xterm256ToCssHex`, `lscolorsToCssMap`, `SlotCssColors` exports to lscolors.ts
+- Preview table in main.ts: 11 rows (one per BSD slot) with slot code, label, and sample text colored inline via fg/bg CSS
+- Preview reads LSCOLORS field (always populated after valid conversion in either direction), renders via `lscolorsToCssMap`
+- `renderPreview` called after every conversion (both directions) and on empty/clear
+- CSS: `.preview-table` with dark theme, `.preview-swatch` for inline colored text
+- Files: src/lscolors.ts, src/main.ts, src/style.css
+- **Learnings:** BSD fg/bg chars share same color palette (a-h → SYSTEM_COLORS[0-7], A-H → SYSTEM_COLORS[8-15]), no need for separate fg/bg lookup paths

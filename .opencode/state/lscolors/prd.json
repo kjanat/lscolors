@@ -48,7 +48,7 @@
 			"id": "color-preview",
 			"title": "Color preview swatches for each slot",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Grid/table showing 11 BSD slots with sample text colored by fg on bg. ANSI→CSS color mapping. xterm256→RGB for 256-color preview. Updates live as user types."
 		},
 		{

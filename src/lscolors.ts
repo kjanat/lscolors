@@ -425,3 +425,55 @@ function rgbToNearestAnsi16Bg(r: number, g: number, b: number): number {
 	if (fg >= 90) return 100 + (fg - 90);
 	return 40 + (fg - 30);
 }
+
+// -------------------------
+// BSD char → CSS color (for preview rendering)
+// -------------------------
+
+/** CSS hex representation of a color, or null for default/terminal-dependent */
+export type CssColor = string | null;
+
+/** Map a BSD LSCOLORS character to a CSS hex color string, or null for default */
+export function bsdCharToCssColor(ch: string): CssColor {
+	const idx = BSD_FG_CHARS.indexOf(ch);
+	if (idx !== -1) {
+		const rgb = SYSTEM_COLORS[idx];
+		return rgb ? rgbToHex(rgb[0], rgb[1], rgb[2]) : null;
+	}
+	const brightIdx = BSD_FG_BRIGHT_CHARS.indexOf(ch);
+	if (brightIdx !== -1) {
+		const rgb = SYSTEM_COLORS[8 + brightIdx];
+		return rgb ? rgbToHex(rgb[0], rgb[1], rgb[2]) : null;
+	}
+	// 'x' or unknown → null (use terminal/theme default)
+	return null;
+}
+
+/** Convert xterm 256-color index to CSS hex string */
+export function xterm256ToCssHex(idx: number): string {
+	const [r, g, b] = xterm256ToRgb(idx);
+	return rgbToHex(r, g, b);
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+	return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
+/** Resolved fg/bg CSS colors for a single BSD slot */
+export interface SlotCssColors {
+	readonly fg: CssColor;
+	readonly bg: CssColor;
+}
+
+/** Parse an LSCOLORS string and return CSS colors for each BSD slot */
+export function lscolorsToCssMap(lscolors: string): Map<BsdSlot, SlotCssColors> {
+	const slots = parseLscolors(lscolors);
+	const result = new Map<BsdSlot, SlotCssColors>();
+	for (const [slot, colors] of slots) {
+		result.set(slot, {
+			fg: bsdCharToCssColor(colors.fg),
+			bg: bsdCharToCssColor(colors.bg),
+		});
+	}
+	return result;
+}
