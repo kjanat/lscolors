@@ -39,3 +39,10 @@ Started: 2026-02-09
 - main.ts: swap button toggles direction state, typed DOM helpers using instanceof (no `as` casts), inputs wired up for next task (live-conversion)
 - Files: index.html (rewritten), src/style.css (new), src/main.ts (rewritten)
 - **Learnings:** Avoid `as T` for DOM elements — use `instanceof` narrowing for type-safe DOM access without assertions
+
+## Task - gh-pages-deploy
+- Created .github/workflows/deploy.yml: push-to-master triggered, builds with bun, deploys dist/ to GitHub Pages
+- Uses actions/checkout@v4, oven-sh/setup-bun@v2, upload-pages-artifact@v3, deploy-pages@v4
+- Concurrency group prevents parallel deploys, permissions scoped to pages+id-token
+- Files: .github/workflows/deploy.yml (new)
+- **Learnings:** Use `bun install --frozen-lockfile` in CI (not `npm ci`); GitHub Pages needs `pages: write` + `id-token: write` permissions

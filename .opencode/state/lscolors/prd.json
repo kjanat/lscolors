@@ -34,7 +34,7 @@
 			"id": "gh-pages-deploy",
 			"title": "GitHub Actions workflow for Pages deployment",
 			"category": "integration",
-			"passes": false,
+			"passes": true,
 			"details": ".github/workflows/deploy.yml. Trigger on push to master. checkout, setup node, npm ci, npm run build, deploy dist/ to GitHub Pages."
 		},
 		{
