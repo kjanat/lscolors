@@ -41,7 +41,7 @@
 			"id": "live-conversion",
 			"title": "Wire live bidirectional conversion + validation",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Typing in LSCOLORS input live-converts to LS_COLORS and vice versa. Invalid input shows inline error without updating other field. Swap button toggles source direction."
 		},
 		{

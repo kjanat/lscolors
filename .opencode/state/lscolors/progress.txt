@@ -46,3 +46,12 @@ Started: 2026-02-09
 - Concurrency group prevents parallel deploys, permissions scoped to pages+id-token
 - Files: .github/workflows/deploy.yml (new)
 - **Learnings:** Use `bun install --frozen-lockfile` in CI (not `npm ci`); GitHub Pages needs `pages: write` + `id-token: write` permissions
+
+## Task - live-conversion
+- Wired live bidirectional conversion: typing in LSCOLORS input converts to LS_COLORS and vice versa
+- Inline validation: caught errors from converter module displayed in error divs (aria-live="polite")
+- Auto-direction switching: typing in a field auto-sets direction to match, swap button toggles and re-converts from new source
+- Re-entrancy guard prevents infinite loops when programmatically setting field values
+- Empty input clears the other field and errors
+- Files: src/main.ts (rewritten)
+- **Learnings:** Converter's `parseLsColors` is lenient (skips bad entries) while `parseLscolors` throws on invalid input — different error handling paths needed per direction
