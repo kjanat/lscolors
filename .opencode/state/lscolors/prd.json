@@ -62,7 +62,7 @@
 			"id": "responsive",
 			"title": "Responsive design and mobile layout",
 			"category": "polish",
-			"passes": false,
+			"passes": true,
 			"details": "Stack inputs vertically on narrow screens. Readable fonts. Touch-friendly buttons. Preview grid wraps. Usable at 375px."
 		}
 	]

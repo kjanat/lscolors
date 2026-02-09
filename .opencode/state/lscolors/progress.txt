@@ -73,3 +73,12 @@ Started: 2026-02-09
 - Hash updates after every conversion (including empty → clears hash)
 - Files: index.html, src/main.ts, src/style.css
 - **Learnings:** Use `history.replaceState` instead of `location.hash =` to avoid triggering hashchange events and scroll behavior
+
+## Task - responsive
+- Added two media query breakpoints: 480px and 375px
+- 480px: reduced padding/fonts, `flex-wrap` on input rows, 44px min touch targets on buttons, preview table hides label column (slot+preview only), hide matching thead column
+- 375px: further tightened padding/fonts/spacing, reduced LSCOLORS letter-spacing, smaller input padding
+- Added `text-size-adjust: 100%` to prevent iOS font inflation
+- Existing layout was already column-based (`.converter` flex-column) — no structural changes needed
+- Files: src/style.css
+- **Learnings:** CSS `nth-child` selectors needed to hide thead cells matching hidden tbody cells; `text-size-adjust` needs both `-webkit-` prefix and unprefixed for cross-browser
