@@ -1,0 +1,25 @@
+# Progress Log
+PRD: lscolors
+Started: 2026-02-09
+
+## Codebase Patterns
+- **Build**: `npm run build` (tsc + vite build), `npm test` (vitest run)
+- **Strict TS**: noUncheckedIndexedAccess, exactOptionalPropertyTypes, no any
+- **exactOptionalPropertyTypes**: can't return `{ prop: undefined }` for `prop?: T` — must conditionally assign
+- **Vite base**: `/lscolors/` for GitHub Pages
+- **Vitest**: needs at least 1 test file or exits 1
+- **VCS**: jj (colocated with git), default branch `master`
+
+---
+
+## Task - scaffolding
+- Scaffolded project: package.json, tsconfig.json, vite.config.ts, vitest.config.ts, index.html, src/main.ts, .gitignore
+- Files: package.json, tsconfig.json, vite.config.ts, vitest.config.ts, index.html, src/main.ts, src/lscolors.test.ts (placeholder), .gitignore
+- **Learnings:** Vitest exits 1 with no test files; Vite base must be /lscolors/ for GH Pages
+
+## Task - converter-module
+- Implemented src/lscolors.ts: full two-way LSCOLORS↔LS_COLORS converter
+- Exports: BsdSlot, BSD_SLOTS, BSD_SLOT_LABELS, Style, BsdSlotColors, parseSgr, stringifySgr, parseLsColors, stringifyLsColors, parseLscolors, stringifyLscolors, lscolorsToLsColors, lsColorsToLscolors, xterm256ToRgb, isValidBsdChar
+- Tightened vs user-provided code: char validation, noUncheckedIndexedAccess guards, exactOptionalPropertyTypes-safe Style construction, readonly arrays/tuples, exported xterm256ToRgb + BSD_SLOT_LABELS for UI use later
+- Files: src/lscolors.ts (new)
+- **Learnings:** exactOptionalPropertyTypes requires conditionally assigning optional props instead of `{ prop: maybeUndefined }`

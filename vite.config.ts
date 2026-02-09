@@ -1,8 +1,8 @@
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: "/lscolors/",
-  build: {
-    outDir: "dist",
-  },
+	base: '/lscolors/',
+	build: {
+		outDir: 'dist',
+	},
 });
