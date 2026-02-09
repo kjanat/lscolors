@@ -1,7 +1,7 @@
 import { lsColorsToLscolors, lscolorsToLsColors } from './convert.ts';
 import { copyToClipboard } from './ui/clipboard.ts';
 import { errorMessage, getButton, getDiv, getInput, getSpan, getTextarea, setError } from './ui/dom.ts';
-import { type Direction, decodeHash, encodeHash, type HashState } from './ui/hash.ts';
+import { decodeHash, type Direction, encodeHash, type HashState } from './ui/hash.ts';
 import { renderPreview } from './ui/preview.ts';
 import './style.css';
 

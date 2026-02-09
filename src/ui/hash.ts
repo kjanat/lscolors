@@ -17,12 +17,12 @@ export function encodeHash(state: HashState): string {
 
 export function decodeHash(hash: string): HashState | null {
 	if (!hash.startsWith('#') || hash.length < 2) return null;
-	const raw = hash.slice(1);
-	const eqIdx = raw.indexOf('=');
+	const raw: string = hash.slice(1);
+	const eqIdx: number = raw.indexOf('=');
 	if (eqIdx === -1) return null;
 
-	const key = raw.slice(0, eqIdx);
-	const value = decodeURIComponent(raw.slice(eqIdx + 1));
+	const key: string = raw.slice(0, eqIdx);
+	const value: string = decodeURIComponent(raw.slice(eqIdx + 1));
 	if (value === '') return null;
 
 	if (key === 'lscolors') {

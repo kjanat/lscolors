@@ -5,10 +5,10 @@
 export function copyToClipboard(btn: HTMLButtonElement, text: string): void {
 	if (text === '') return;
 	void navigator.clipboard.writeText(text).then(() => {
-		const original = btn.textContent;
+		const original: string = btn.textContent;
 		btn.textContent = 'Copied!';
 		btn.dataset.copied = 'true';
-		setTimeout(() => {
+		setTimeout((): void => {
 			btn.textContent = original;
 			delete btn.dataset.copied;
 		}, 1200);

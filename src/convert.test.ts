@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { parseLscolors } from './bsd.ts';
-import { lsColorsToLscolors, lscolorsToLsColors, xterm256ToRgb } from './convert.ts';
+import {
+	bsdCharToCssColor,
+	lscolorsToCssMap,
+	lsColorsToLscolors,
+	lscolorsToLsColors,
+	xterm256ToCssHex,
+	xterm256ToRgb,
+} from './convert.ts';
 import { parseLsColors } from './gnu.ts';
 import { BSD_SLOTS } from './types.ts';
 
@@ -287,5 +294,110 @@ describe('256-color approximation', () => {
 		const result = lsColorsToLscolors('di=38;5;232');
 		const map = parseLscolors(result);
 		expect(map.get('di')?.fg).toBe('a');
+	});
+});
+
+// -------------------------
+// bsdCharToCssColor
+// -------------------------
+
+describe('bsdCharToCssColor', () => {
+	it('maps lowercase a-h to system color hex', () => {
+		expect(bsdCharToCssColor('a')).toBe('#000000'); // black
+		expect(bsdCharToCssColor('b')).toBe('#cd0000'); // red
+		expect(bsdCharToCssColor('c')).toBe('#00cd00'); // green
+		expect(bsdCharToCssColor('d')).toBe('#cdcd00'); // brown/yellow
+		expect(bsdCharToCssColor('e')).toBe('#0000ee'); // blue
+		expect(bsdCharToCssColor('f')).toBe('#cd00cd'); // magenta
+		expect(bsdCharToCssColor('g')).toBe('#00cdcd'); // cyan
+		expect(bsdCharToCssColor('h')).toBe('#e5e5e5'); // light grey
+	});
+
+	it('maps uppercase A-H to bright system color hex', () => {
+		expect(bsdCharToCssColor('A')).toBe('#7f7f7f'); // bright black (grey)
+		expect(bsdCharToCssColor('B')).toBe('#ff0000'); // bright red
+		expect(bsdCharToCssColor('C')).toBe('#00ff00'); // bright green
+		expect(bsdCharToCssColor('D')).toBe('#ffff00'); // bright yellow
+		expect(bsdCharToCssColor('E')).toBe('#5c5cff'); // bright blue
+		expect(bsdCharToCssColor('F')).toBe('#ff00ff'); // bright magenta
+		expect(bsdCharToCssColor('G')).toBe('#00ffff'); // bright cyan
+		expect(bsdCharToCssColor('H')).toBe('#ffffff'); // bright white
+	});
+
+	it('returns null for x (default)', () => {
+		expect(bsdCharToCssColor('x')).toBeNull();
+	});
+
+	it('returns null for unknown chars', () => {
+		expect(bsdCharToCssColor('z')).toBeNull();
+		expect(bsdCharToCssColor('0')).toBeNull();
+	});
+});
+
+// -------------------------
+// xterm256ToCssHex
+// -------------------------
+
+describe('xterm256ToCssHex', () => {
+	it('converts system colors', () => {
+		expect(xterm256ToCssHex(0)).toBe('#000000');
+		expect(xterm256ToCssHex(1)).toBe('#cd0000');
+		expect(xterm256ToCssHex(15)).toBe('#ffffff');
+	});
+
+	it('converts color cube indices', () => {
+		expect(xterm256ToCssHex(16)).toBe('#000000'); // 0,0,0
+		expect(xterm256ToCssHex(196)).toBe('#ff0000'); // 5,0,0
+		expect(xterm256ToCssHex(21)).toBe('#0000ff'); // 0,0,5
+	});
+
+	it('converts grayscale ramp', () => {
+		expect(xterm256ToCssHex(232)).toBe('#080808');
+		expect(xterm256ToCssHex(255)).toBe('#eeeeee');
+	});
+
+	it('converts out-of-range to fallback grey', () => {
+		expect(xterm256ToCssHex(256)).toBe('#808080');
+		expect(xterm256ToCssHex(-1)).toBe('#808080');
+	});
+});
+
+// -------------------------
+// lscolorsToCssMap
+// -------------------------
+
+describe('lscolorsToCssMap', () => {
+	it('maps all 11 slots from valid LSCOLORS', () => {
+		const cssMap = lscolorsToCssMap('exfxcxdxbxegedabagacad');
+		expect(cssMap.size).toBe(11);
+
+		// di = e(blue fg), x(default bg)
+		expect(cssMap.get('di')).toEqual({ fg: '#0000ee', bg: null });
+		// ln = f(magenta fg), x(default bg)
+		expect(cssMap.get('ln')).toEqual({ fg: '#cd00cd', bg: null });
+		// bd = e(blue fg), g(cyan bg)
+		expect(cssMap.get('bd')).toEqual({ fg: '#0000ee', bg: '#00cdcd' });
+		// su = a(black fg), b(red bg)
+		expect(cssMap.get('su')).toEqual({ fg: '#000000', bg: '#cd0000' });
+	});
+
+	it('maps all-default to all nulls', () => {
+		const cssMap = lscolorsToCssMap('xxxxxxxxxxxxxxxxxxxxxx');
+		for (const [, colors] of cssMap) {
+			expect(colors.fg).toBeNull();
+			expect(colors.bg).toBeNull();
+		}
+	});
+
+	it('maps bright chars to bright colors', () => {
+		const cssMap = lscolorsToCssMap('ExFxCxDxBxEGEDABAGACAD');
+		// di = E(bright blue), x(default)
+		expect(cssMap.get('di')).toEqual({ fg: '#5c5cff', bg: null });
+		// bd = E(bright blue), G(bright cyan)
+		expect(cssMap.get('bd')).toEqual({ fg: '#5c5cff', bg: '#00ffff' });
+	});
+
+	it('throws on invalid LSCOLORS length', () => {
+		expect(() => lscolorsToCssMap('abc')).toThrow('LSCOLORS must be exactly 22 chars');
 	});
 });

@@ -242,7 +242,7 @@ function rgbToNearestAnsi16Fg(r: number, g: number, b: number): number {
 }
 
 function rgbToNearestAnsi16Bg(r: number, g: number, b: number): number {
-	const fg = rgbToNearestAnsi16Fg(r, g, b);
+	const fg: number = rgbToNearestAnsi16Fg(r, g, b);
 	if (fg >= 90) return 100 + (fg - 90);
 	return 40 + (fg - 30);
 }

@@ -10,9 +10,9 @@ import type { Style } from './types.ts';
 export function parseSgr(s: string): Style {
 	if (!s) return { codes: [] };
 
-	const nums = s
+	const nums: number[] = s
 		.split(';')
-		.map((x) => x.trim())
+		.map((x: string): string => x.trim())
 		.filter(Boolean)
 		.map(Number)
 		.filter(Number.isFinite);

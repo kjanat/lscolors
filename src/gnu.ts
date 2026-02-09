@@ -14,10 +14,10 @@ export function parseLsColors(lsColors: string): Map<string, Style> {
 
 	for (const part of lsColors.split(':')) {
 		if (!part) continue;
-		const eq = part.indexOf('=');
+		const eq: number = part.indexOf('=');
 		if (eq === -1) continue;
-		const key = part.slice(0, eq).trim();
-		const value = part.slice(eq + 1).trim();
+		const key: string = part.slice(0, eq).trim();
+		const value: string = part.slice(eq + 1).trim();
 		if (!key) continue;
 		map.set(key, parseSgr(value));
 	}
