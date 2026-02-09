@@ -5,7 +5,7 @@ import {
 	lscolorsToCssMap,
 	lsColorsToLscolors,
 	lscolorsToLsColors,
-} from './lscolors';
+} from './lscolors.ts';
 import './style.css';
 
 /** Conversion direction: which field is the source of truth */

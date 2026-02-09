@@ -2,7 +2,16 @@
 
 Convert between macOS/BSD `LSCOLORS` and GNU `LS_COLORS` (dircolors) formats.
 
-**[Live site](https://kjanat.github.io/lscolors/)**
+<details open>
+<summary>Screenshot</summary>
+<div align="center">
+  <a href="https://kjanat.github.io/lscolors/" target="_blank" rel="noopener noreferrer">
+    <img src="https://github.com/kjanat/lscolors/raw/master/screenshot.png" alt="Try it online" width="600"><br>
+  </a>
+</div>
+</details>
+
+[**Try it online**][Site]
 
 ## What it does
 
@@ -24,8 +33,6 @@ This tool converts between them in both directions with live preview.
 - 256-color to 16-color approximation (Euclidean RGB distance)
 - Copy to clipboard
 - Shareable permalink via URL hash
-- Responsive down to 375px
-- Zero runtime dependencies
 
 ## Supported slots
 
@@ -51,6 +58,31 @@ This tool converts between them in both directions with live preview.
 - **256-color approximation**: Mapped to nearest of the 16 basic ANSI colors.
   Close enough for a preview, not pixel-perfect.
 - **Only the 11 overlapping keys** are preserved when converting GNU to BSD.
+- **Bold (01) not mapped to uppercase**: GNU `01;34` (bold blue) does not
+  produce uppercase `E` in the BSD output. The bold attribute is ignored; only
+  the color code determines the BSD char.
+- **No last-wins overriding**: If multiple fg codes appear (e.g. `34;35`), the
+  first match is used, not the last.
+- **Reverse video (07) ignored**: ANSI code 7 (swap fg/bg) is not handled.
+
+## Why?
+
+I was checking out [monokai.pro/zsh] and had some issues with their instructions
+for setting up my zsh config with the monokai theme, but apparently their config
+is macOS/BSD-oriented and I don't have a Mac. I was bored and got AI automation
+somewhat working, so I threw together this little tool to convert their provided
+LSCOLORS value into LS_COLORS format.\
+Then I figured I might as well host it on GitHub for free.
+
+## See also
+
+- [lucas-flowers/gnu2bsd] -- Python CLI that converts GNU `LS_COLORS` to BSD
+  `LSCOLORS` (one direction only). Handles bold-to-uppercase, last-wins
+  overriding, and reverse video (code 7).
+- [ggreer/lscolors] -- interactive `LSCOLORS` / `LS_COLORS` generator with color
+  pickers.
+- [sharkdp/vivid] -- themeable `LS_COLORS` generator with YAML config and
+  truecolor support.
 
 ## Development
 
@@ -62,6 +94,12 @@ bun run build     # production build -> dist/
 bun run format    # format with dprint
 ```
 
-## Stack
+<!--link-definitions-->
 
-TypeScript, Vite, Vitest. No runtime dependencies. Hosted on GitHub Pages.
+[monokai.pro/zsh]: https://monokai.pro/zsh
+[lucas-flowers/gnu2bsd]: https://github.com/lucas-flowers/gnu2bsd
+[ggreer/lscolors]: https://github.com/ggreer/lscolors
+[sharkdp/vivid]: https://github.com/sharkdp/vivid
+[Site]: https://kjanat.github.io/lscolors/
+
+<!--markdownlint-disable-file MD033-->

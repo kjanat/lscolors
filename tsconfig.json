@@ -12,7 +12,10 @@
 		"noFallthroughCasesInSwitch": true,
 		"isolatedModules": true,
 		"skipLibCheck": true,
-		"outDir": "dist"
+		"outDir": "dist",
+		"allowImportingTsExtensions": true,
+		"emitDeclarationOnly": true,
+		"composite": true
 	},
 	"include": ["src"]
 }

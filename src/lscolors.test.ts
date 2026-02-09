@@ -11,7 +11,7 @@ import {
 	stringifyLscolors,
 	stringifySgr,
 	xterm256ToRgb,
-} from './lscolors';
+} from './lscolors.ts';
 
 // -------------------------
 // parseSgr / stringifySgr
