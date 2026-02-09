@@ -1,12 +1,13 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": true
+		"useIgnoreFile": true,
+		"defaultBranch": "master"
 	},
 	"files": {
-		"includes": ["**", "!!**/dist"]
+		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache"]
 	},
 	"formatter": {
 		"enabled": false
@@ -15,10 +16,12 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true
+		},
+		"domains": {
+			"project": "recommended"
 		}
 	},
-	"javascript": {
-	},
+	"javascript": {},
 	"assist": {
 		"enabled": true,
 		"actions": {

@@ -8,6 +8,7 @@
 		"build": "vite build",
 		"dev": "vite",
 		"format": "dprint fmt .",
+		"lint": "biome check",
 		"preview": "vite preview",
 		"test": "vitest run",
 		"test:watch": "vitest"

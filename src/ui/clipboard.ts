@@ -7,10 +7,10 @@ export function copyToClipboard(btn: HTMLButtonElement, text: string): void {
 	void navigator.clipboard.writeText(text).then(() => {
 		const original = btn.textContent;
 		btn.textContent = 'Copied!';
-		btn.dataset['copied'] = 'true';
+		btn.dataset.copied = 'true';
 		setTimeout(() => {
 			btn.textContent = original;
-			delete btn.dataset['copied'];
+			delete btn.dataset.copied;
 		}, 1200);
 	});
 }
