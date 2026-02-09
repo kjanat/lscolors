@@ -64,3 +64,12 @@ Started: 2026-02-09
 - CSS: `.preview-table` with dark theme, `.preview-swatch` for inline colored text
 - Files: src/lscolors.ts, src/main.ts, src/style.css
 - **Learnings:** BSD fg/bg chars share same color palette (a-h → SYSTEM_COLORS[0-7], A-H → SYSTEM_COLORS[8-15]), no need for separate fg/bg lookup paths
+
+## Task - copy-permalink
+- Copy buttons: added "Copy" button next to both LSCOLORS input and LS_COLORS textarea via `.input-row` flex layout
+- Clipboard: `navigator.clipboard.writeText()` with brief "Copied!" flash feedback + `data-copied` attribute for green border styling
+- URL hash permalink: `#lscolors=<value>` or `#ls_colors=<value>` format. `encodeHash`/`decodeHash` handle encoding/parsing. `history.replaceState` updates hash without scroll/navigation
+- On load: reads hash, populates source field, sets direction, runs conversion — full state restored from URL
+- Hash updates after every conversion (including empty → clears hash)
+- Files: index.html, src/main.ts, src/style.css
+- **Learnings:** Use `history.replaceState` instead of `location.hash =` to avoid triggering hashchange events and scroll behavior

@@ -57,6 +57,62 @@ function errorMessage(err: unknown): string {
 }
 
 // -------------------------
+// Copy to clipboard
+// -------------------------
+
+/**
+ * Copy text to clipboard and briefly flash the button to confirm.
+ * Falls back gracefully if clipboard API is unavailable.
+ */
+function copyToClipboard(btn: HTMLButtonElement, text: string): void {
+	if (text === '') return;
+	void navigator.clipboard.writeText(text).then(() => {
+		const original = btn.textContent;
+		btn.textContent = 'Copied!';
+		btn.dataset['copied'] = 'true';
+		setTimeout(() => {
+			btn.textContent = original;
+			delete btn.dataset['copied'];
+		}, 1200);
+	});
+}
+
+// -------------------------
+// URL hash permalink
+// -------------------------
+
+/** Hash format: #lscolors=<value> or #ls_colors=<value> */
+type HashState = {
+	readonly source: Direction;
+	readonly value: string;
+};
+
+function encodeHash(state: HashState): string {
+	if (state.value === '') return '';
+	const key = state.source === 'lscolors-to-ls_colors' ? 'lscolors' : 'ls_colors';
+	return `#${key}=${encodeURIComponent(state.value)}`;
+}
+
+function decodeHash(hash: string): HashState | null {
+	if (!hash.startsWith('#') || hash.length < 2) return null;
+	const raw = hash.slice(1);
+	const eqIdx = raw.indexOf('=');
+	if (eqIdx === -1) return null;
+
+	const key = raw.slice(0, eqIdx);
+	const value = decodeURIComponent(raw.slice(eqIdx + 1));
+	if (value === '') return null;
+
+	if (key === 'lscolors') {
+		return { source: 'lscolors-to-ls_colors', value };
+	}
+	if (key === 'ls_colors') {
+		return { source: 'ls_colors-to-lscolors', value };
+	}
+	return null;
+}
+
+// -------------------------
 // Sample filenames per BSD slot
 // -------------------------
 
@@ -166,6 +222,8 @@ function init(): void {
 	const lscolorsInput = getInput('lscolors-input');
 	const lsColorsInput = getTextarea('ls-colors-input');
 	const swapBtn = getButton('swap-btn');
+	const copyLscolorsBtn = getButton('copy-lscolors');
+	const copyLsColorsBtn = getButton('copy-ls-colors');
 	const directionIndicator = getSpan('direction-indicator');
 	const lscolorsError = getDiv('lscolors-error');
 	const lsColorsError = getDiv('ls-colors-error');
@@ -186,6 +244,20 @@ function init(): void {
 		renderPreview(previewContainer, lscolorsInput.value);
 	}
 
+	/** Update the URL hash to reflect current state (without triggering hashchange) */
+	function updateHash(): void {
+		const state: HashState = direction === 'lscolors-to-ls_colors'
+			? { source: direction, value: lscolorsInput.value }
+			: { source: direction, value: lsColorsInput.value };
+		const hash = encodeHash(state);
+		if (hash === '') {
+			// Remove hash without scrolling
+			history.replaceState(null, '', window.location.pathname + window.location.search);
+		} else {
+			history.replaceState(null, '', hash);
+		}
+	}
+
 	/** Convert LSCOLORS → LS_COLORS, updating the LS_COLORS field */
 	function convertFromLscolors(): void {
 		const value = lscolorsInput.value;
@@ -193,6 +265,7 @@ function init(): void {
 			lsColorsInput.value = '';
 			setError(lscolorsError, '');
 			updatePreview();
+			updateHash();
 			return;
 		}
 		try {
@@ -202,6 +275,7 @@ function init(): void {
 			setError(lscolorsError, errorMessage(err));
 		}
 		updatePreview();
+		updateHash();
 	}
 
 	/** Convert LS_COLORS → LSCOLORS, updating the LSCOLORS field */
@@ -211,6 +285,7 @@ function init(): void {
 			lscolorsInput.value = '';
 			setError(lsColorsError, '');
 			updatePreview();
+			updateHash();
 			return;
 		}
 		try {
@@ -220,6 +295,7 @@ function init(): void {
 			setError(lsColorsError, errorMessage(err));
 		}
 		updatePreview();
+		updateHash();
 	}
 
 	/** Run conversion based on current direction */
@@ -230,6 +306,8 @@ function init(): void {
 			convertFromLsColors();
 		}
 	}
+
+	// --- Input event listeners ---
 
 	lscolorsInput.addEventListener('input', () => {
 		if (converting) return;
@@ -253,6 +331,8 @@ function init(): void {
 		converting = false;
 	});
 
+	// --- Swap button ---
+
 	swapBtn.addEventListener('click', () => {
 		direction = direction === 'lscolors-to-ls_colors'
 			? 'ls_colors-to-lscolors'
@@ -263,7 +343,31 @@ function init(): void {
 		convert();
 	});
 
-	updateDirectionLabel();
+	// --- Copy buttons ---
+
+	copyLscolorsBtn.addEventListener('click', () => {
+		copyToClipboard(copyLscolorsBtn, lscolorsInput.value);
+	});
+
+	copyLsColorsBtn.addEventListener('click', () => {
+		copyToClipboard(copyLsColorsBtn, lsColorsInput.value);
+	});
+
+	// --- Load from URL hash on init ---
+
+	const hashState = decodeHash(window.location.hash);
+	if (hashState !== null) {
+		direction = hashState.source;
+		if (hashState.source === 'lscolors-to-ls_colors') {
+			lscolorsInput.value = hashState.value;
+		} else {
+			lsColorsInput.value = hashState.value;
+		}
+		updateDirectionLabel();
+		convert();
+	} else {
+		updateDirectionLabel();
+	}
 }
 
 init();

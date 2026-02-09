@@ -55,7 +55,7 @@
 			"id": "copy-permalink",
 			"title": "Copy-to-clipboard and permalink via URL hash",
 			"category": "polish",
-			"passes": false,
+			"passes": true,
 			"details": "Copy button next to each output. URL hash encodes current state. On load, read hash and populate fields."
 		},
 		{

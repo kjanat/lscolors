@@ -19,14 +19,24 @@
 				<div class="field field--lscolors">
 					<label for="lscolors-input">LSCOLORS <span class="label-hint"
 						>(BSD/macOS, 22 chars)</span></label>
-					<input
-						id="lscolors-input"
-						type="text"
-						maxlength="22"
-						spellcheck="false"
-						autocomplete="off"
-						placeholder="exfxcxdxbxegedabagacad"
-					>
+					<div class="input-row">
+						<input
+							id="lscolors-input"
+							type="text"
+							maxlength="22"
+							spellcheck="false"
+							autocomplete="off"
+							placeholder="exfxcxdxbxegedabagacad"
+						>
+						<button
+							id="copy-lscolors"
+							type="button"
+							class="copy-btn"
+							aria-label="Copy LSCOLORS value"
+						>
+							Copy
+						</button>
+					</div>
 					<div
 						id="lscolors-error"
 						class="error"
@@ -51,13 +61,23 @@
 				<div class="field field--ls-colors">
 					<label for="ls-colors-input">LS_COLORS <span class="label-hint"
 						>(GNU dircolors)</span></label>
-					<textarea
-						id="ls-colors-input"
-						rows="4"
-						spellcheck="false"
-						autocomplete="off"
-						placeholder="di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43"
-					></textarea>
+					<div class="input-row">
+						<textarea
+							id="ls-colors-input"
+							rows="4"
+							spellcheck="false"
+							autocomplete="off"
+							placeholder="di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43"
+						></textarea>
+						<button
+							id="copy-ls-colors"
+							type="button"
+							class="copy-btn"
+							aria-label="Copy LS_COLORS value"
+						>
+							Copy
+						</button>
+					</div>
 					<div
 						id="ls-colors-error"
 						class="error"
