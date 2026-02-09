@@ -4,8 +4,8 @@ export { isValidBsdChar, parseLscolors, stringifyLscolors } from './bsd.ts';
 export type { LsColorsToLscolorsOptions, LscolorsToLsColorsOptions } from './convert.ts';
 export {
 	bsdCharToCssColor,
-	lscolorsToCssMap,
 	lsColorsToLscolors,
+	lscolorsToCssMap,
 	lscolorsToLsColors,
 	xterm256ToCssHex,
 	xterm256ToRgb,

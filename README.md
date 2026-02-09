@@ -68,9 +68,9 @@ This tool converts between them in both directions with live preview.
 
 I was checking out [monokai.pro/zsh] and had some issues with their instructions
 for setting up my zsh config with the monokai theme, but apparently their config
-is macOS/BSD-oriented and I don't have a Mac. I was bored and got AI automation
-somewhat working, so I threw together this little tool to convert their provided
-LSCOLORS value into LS_COLORS format.\
+is macOS/BSD-oriented and I don't have a Mac. I got AI automation somewhat
+working, so I threw together this little tool to convert their provided
+`LSCOLORS` value into `LS_COLORS` format.\
 Then I figured I might as well host it on GitHub for free.
 
 ## See also

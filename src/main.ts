@@ -1,7 +1,7 @@
 import { lsColorsToLscolors, lscolorsToLsColors } from './convert.ts';
 import { copyToClipboard } from './ui/clipboard.ts';
 import { errorMessage, getButton, getDiv, getInput, getSpan, getTextarea, setError } from './ui/dom.ts';
-import { decodeHash, type Direction, encodeHash, type HashState } from './ui/hash.ts';
+import { type Direction, decodeHash, encodeHash, type HashState } from './ui/hash.ts';
 import { renderPreview } from './ui/preview.ts';
 import './style.css';
 
@@ -16,6 +16,7 @@ function init(): void {
 	const copyLscolorsBtn = getButton('copy-lscolors');
 	const copyLsColorsBtn = getButton('copy-ls-colors');
 	const directionIndicator = getSpan('direction-indicator');
+	const swapIcon = getSpan('swap-icon');
 	const lscolorsError = getDiv('lscolors-error');
 	const lsColorsError = getDiv('ls-colors-error');
 	const previewContainer = getDiv('preview');
@@ -26,9 +27,11 @@ function init(): void {
 	let converting = false;
 
 	function updateDirectionLabel(): void {
-		directionIndicator.textContent = direction === 'lscolors-to-ls_colors'
+		const down = direction === 'lscolors-to-ls_colors';
+		directionIndicator.textContent = down
 			? 'LSCOLORS \u2192 LS_COLORS'
 			: 'LS_COLORS \u2192 LSCOLORS';
+		swapIcon.textContent = down ? '\u2193' : '\u2191';
 	}
 
 	function updatePreview(): void {

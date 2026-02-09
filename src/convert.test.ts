@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { parseLscolors } from './bsd.ts';
 import {
 	bsdCharToCssColor,
-	lscolorsToCssMap,
 	lsColorsToLscolors,
+	lscolorsToCssMap,
 	lscolorsToLsColors,
 	xterm256ToCssHex,
 	xterm256ToRgb,
