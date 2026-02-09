@@ -19,6 +19,7 @@ function init(): void {
 	const swapIcon = getSpan('swap-icon');
 	const lscolorsError = getDiv('lscolors-error');
 	const lsColorsError = getDiv('ls-colors-error');
+	const shareBtn = getButton('share-btn');
 	const previewContainer = getDiv('preview');
 
 	let direction: Direction = 'lscolors-to-ls_colors';
@@ -145,6 +146,12 @@ function init(): void {
 
 	copyLsColorsBtn.addEventListener('click', () => {
 		copyToClipboard(copyLsColorsBtn, lsColorsInput.value);
+	});
+
+	// --- Share permalink ---
+
+	shareBtn.addEventListener('click', () => {
+		copyToClipboard(shareBtn, window.location.href);
 	});
 
 	// --- Load from URL hash on init ---
