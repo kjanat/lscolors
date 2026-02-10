@@ -97,3 +97,10 @@ Started: 2026-02-10
 - Removed `forceConsistentCasingInFileNames: false` workaround (no longer needed)
 - Files changed: src/components/GnuInput.svelte (new), src/components/BsdInput.svelte (renamed), src/App.svelte
 - **Learnings:** TypeScript's casing diagnostic fires even with `forceConsistentCasingInFileNames: false` when both files are globbed via `include`. Avoid case-only filename collisions entirely — use semantically distinct names. `bind:value` on `<textarea>` works identically to `<input>`.
+
+## Task - swap-control
+- Created `src/components/SwapControl.svelte` — purely presentational swap button + direction label
+- Props: `icon` (string), `label` (string), `onswap` (() => void), `class` (CSS passthrough), `...rest` via `HTMLAttributes<HTMLDivElement>`
+- Replaced 11-line inline swap markup in App.svelte with single `<SwapControl icon={swapIcon} label={directionLabel} onswap={handleSwap} />`
+- Files changed: src/components/SwapControl.svelte (new), src/App.svelte
+- **Learnings:** Purely presentational components (no internal state) are the simplest extraction — just props + template. `onswap` callback prop directly wired to `onclick` on internal button. dprint auto-formats new .svelte files on first `bun run format`.

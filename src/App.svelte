@@ -16,6 +16,7 @@ import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
 import CopyButton from './components/CopyButton.svelte';
 import BsdInput from './components/BsdInput.svelte';
 import GnuInput from './components/GnuInput.svelte';
+import SwapControl from './components/SwapControl.svelte';
 import './style.css';
 
 const SLOT_SAMPLE_TEXT: Readonly<Record<BsdSlot, string>> = {
@@ -208,17 +209,7 @@ $effect(() => {
 		/>
 
 		<!-- Swap direction -->
-		<div class="swap-container">
-			<button
-				type="button"
-				class="swap-btn"
-				aria-label="Swap conversion direction"
-				onclick={handleSwap}
-			>
-				<span class="swap-icon" aria-hidden="true">{swapIcon}</span>
-			</button>
-			<span class="direction">{directionLabel}</span>
-		</div>
+		<SwapControl icon={swapIcon} label={directionLabel} onswap={handleSwap} />
 
 		<!-- LS_COLORS textarea -->
 		<GnuInput

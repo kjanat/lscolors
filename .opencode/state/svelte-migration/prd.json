@@ -41,7 +41,7 @@
 			"id": "swap-control",
 			"title": "Extract SwapControl component",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Extract direction swap button + direction label into src/components/SwapControl.svelte. Props: icon (string: arrow), label (string: direction text), onswap (() => void). Done when: swap toggles direction, icon and label update reactively."
 		},
 		{
