@@ -195,3 +195,15 @@ Started: 2026-02-10
 - Updated `playwright.config.ts`: `npm run` → `bun run`, simplified config
 - Files changed: e2e/demo.test.ts (expanded from 1 to 19 tests), playwright.config.ts
 - **Learnings:** LSCOLORS↔LS_COLORS conversion is NOT lossless (includes extra or/mi defaults, different bold/color mappings) — don't assert exact converted values in e2e tests. Use regex patterns (`/di=\d/`, `/^[a-hA-Hx]{22}$/`) to verify conversion happened without coupling to specific output. `vite.config.ts` base is dynamic (`process.env.GITHUB_ACTIONS`) — don't hardcode `/lscolors/` baseURL in playwright config. Clipboard permission grant via `context.grantPermissions(['clipboard-read', 'clipboard-write'])` needed for share button e2e test.
+
+## Task - update-agents-md
+- Rewrote AGENTS.md from pre-migration (imperative DOM) to post-migration (Svelte 5) codebase
+- Updated STRUCTURE tree: removed src/ui/dom.ts, clipboard.ts, preview.ts, index.ts; added App.svelte, components/*.svelte, svelte.config.js, e2e/
+- Updated WHERE TO LOOK table: added App.svelte state/handlers, all 6 component locations, preview.ts helpers, e2e tests
+- Added Svelte 5 CONVENTIONS section: runes, props pattern, class prop, child styling, mount pattern, reactive URLs, svelte-check
+- Updated Testing section: split into unit tests, component tests (vitest-browser-svelte), e2e (Playwright), combined
+- Updated COMMANDS: added check, test:unit, test:e2e
+- Updated ANTI-PATTERNS: removed re-entrant guard (Svelte handles it), added no bare :global(), no ID selectors in scoped styles
+- Updated NOTES: removed dead code / init() references, added pure logic layer note, svelte-shims.d.ts note, dynamic Vite base note
+- Files changed: AGENTS.md
+- **Learnings:** AGENTS.md should mirror the actual file tree exactly. The commit hash in the header is a reference point, not auto-updated. Keep the "pure logic layer" note prominent — it's the key architectural boundary that survives across UI rewrites.

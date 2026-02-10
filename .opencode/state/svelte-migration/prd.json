@@ -104,7 +104,7 @@
 			"id": "update-agents-md",
 			"title": "Update AGENTS.md for Svelte codebase",
 			"category": "polish",
-			"passes": false,
+			"passes": true,
 			"details": "Rewrite root AGENTS.md to reflect post-migration codebase. Update STRUCTURE tree: remove src/ui/dom.ts, clipboard.ts, preview.ts; add src/App.svelte, src/components/*.svelte, svelte.config.js. Update WHERE TO LOOK table: component locations, App.svelte for state/handlers. Update CONVENTIONS: add Svelte section (runes, $state/$derived/$effect, bind:value, scoped styles, no SvelteKit). Update COMMANDS: add bun run check, update test commands. Update NOTES: remove re-entrant guard note, add Svelte mount pattern. Remove DOM Access section (no more dom.ts). Update ANTI-PATTERNS if needed. Done when: AGENTS.md accurately describes the Svelte-based codebase."
 		},
 		{
