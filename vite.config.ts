@@ -1,3 +1,4 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { playwright } from '@vitest/browser-playwright';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
@@ -33,5 +34,5 @@ export default defineConfig({
 			},
 		],
 	},
-	plugins: [devtoolsJson()],
+	plugins: [svelte(), devtoolsJson()],
 });

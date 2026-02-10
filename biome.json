@@ -12,7 +12,8 @@
 			"!!**/dist",
 			"!!**/.jj",
 			"!!**/coverage",
-			"!!**/.*_cache"
+			"!!**/*.*_cache",
+			"!!**/*.svelte"
 		],
 		"ignoreUnknown": true
 	},

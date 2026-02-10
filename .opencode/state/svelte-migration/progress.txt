@@ -36,5 +36,20 @@ Started: 2026-02-10
   - update-agents-md   → task_01KH2M3KGHC3C200J6Y0NRHD10
   - verify-all         → task_01KH2KHFZJ2TD769NCNNPGTGE9
 
+- **Svelte shims**: `src/svelte-shims.d.ts` declares `*.svelte` module type for TS. Uses `Component` from svelte (Svelte 5 style). The `/// <reference types="svelte" />` approach doesn't work with svelte-check — explicit `declare module` is needed.
+- **Biome + Svelte**: `.svelte` files ignored in biome.json (Biome parses them via HTML support but gives false positives on Svelte patterns like reactive `let`). Biome formatter also disabled (dprint handles it via markup_fmt).
+- **dprint + Svelte**: markup_fmt plugin already formats `.svelte` files out of the box. No extra config needed.
+- **svelte-check**: runs via `bun run check`. Uses `--tsconfig ./tsconfig.json`.
+- **Pre-existing issues**: Biome formatter disagrees with dprint on trailing commas in jsonc and CSS transition shorthand formatting. Test project filtering (`--project server`) doesn't work with vitest 4 inline project config.
+
 ---
 <!-- Task logs below - APPEND ONLY -->
+
+## Task - toolchain-setup
+- Added `svelte.config.js` with vitePreprocess()
+- Added `"check"` script to package.json (`svelte-check --tsconfig ./tsconfig.json`)
+- Created `src/svelte-shims.d.ts` with `declare module '*.svelte'` for TS
+- Added `!!**/*.svelte` to biome.json file ignores
+- Created minimal `src/App.svelte` placeholder (`<h1>LSCOLORS</h1>`)
+- Files changed: biome.json, package.json, tsconfig.json (no change needed), src/App.svelte, src/svelte-shims.d.ts, svelte.config.js
+- **Learnings:** svelte-check needs explicit `declare module '*.svelte'` in a .d.ts included by tsconfig; `/// <reference types="svelte" />` alone doesn't work. markup_fmt handles .svelte formatting. Most toolchain was already wired in prep commit.

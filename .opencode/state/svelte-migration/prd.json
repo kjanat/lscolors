@@ -6,7 +6,7 @@
 			"id": "toolchain-setup",
 			"title": "Svelte toolchain setup",
 			"category": "architecture",
-			"passes": false,
+			"passes": true,
 			"details": "Install svelte, @sveltejs/vite-plugin-svelte, svelte-check. Add svelte() plugin to vite.config.ts (alongside existing devtoolsJson). Create svelte.config.js with vitePreprocess(). Update tsconfig.json for Svelte types. Add 'check' script to package.json. Configure dprint for .svelte (investigate markup_fmt). Add .svelte to biome.json ignores (Biome can't lint Svelte). Done when: bun run build still works with Svelte plugin loaded, bun run check runs svelte-check."
 		},
 		{
