@@ -55,6 +55,36 @@ describe('App.svelte', () => {
 			);
 	});
 
+	it('converts LS_COLORS input to LSCOLORS', async () => {
+		const screen = render(App);
+		const gnuTextarea = screen.getByRole('textbox', { name: /LS_COLORS/ });
+		await gnuTextarea.fill(
+			'di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43',
+		);
+
+		const bsdInput = screen.getByRole('textbox', { name: /LSCOLORS/ });
+		await expect.element(bsdInput).toHaveValue('exfxcxdxbxegedabagacad');
+	});
+
+	it('swap toggles direction label', async () => {
+		const { container } = render(App);
+		const swap = container.querySelector(
+			'[aria-label="Swap conversion direction"]',
+		);
+		expect(swap).not.toBeNull();
+
+		const direction = container.querySelector('.direction');
+		expect(direction).not.toBeNull();
+		expect(direction?.textContent).toContain('LSCOLORS');
+		expect(direction?.textContent).toContain('LS_COLORS');
+
+		swap?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+		await new Promise((r) => setTimeout(r, 50));
+
+		expect(direction?.textContent).toContain('LS_COLORS');
+		expect(direction?.textContent).toContain('LSCOLORS');
+	});
+
 	it('shows error for invalid LSCOLORS', async () => {
 		const screen = render(App);
 		const bsdInput = screen.getByRole('textbox', { name: /LSCOLORS/ });

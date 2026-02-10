@@ -32,7 +32,7 @@ let { url, class: className = '', ...rest }: Props = $props();
 }
 
 .share-row :global(.share-btn.copied) {
-	color: #66bb6a;
-	border-color: #66bb6a;
+	color: var(--success);
+	border-color: var(--success);
 }
 </style>

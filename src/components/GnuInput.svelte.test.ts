@@ -57,16 +57,14 @@ describe('GnuInput', () => {
 	});
 
 	it('hides error div when error is empty', async () => {
-		const screen = render(GnuInput, {
+		const { container } = render(GnuInput, {
 			value: '',
 			error: '',
 			oninput: () => {},
 		});
-		await expect
-			.element(screen.getByRole('textbox', { name: /LS_COLORS/ }))
-			.toBeInTheDocument();
-		const errors = screen.getByText('Parse error').elements();
-		expect(errors).toHaveLength(0);
+		const errorDiv = container.querySelector('#ls-colors-error');
+		expect(errorDiv).not.toBeNull();
+		expect(errorDiv?.getAttribute('hidden')).not.toBeNull();
 	});
 
 	it('renders copy button', async () => {

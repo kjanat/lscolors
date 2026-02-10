@@ -3,20 +3,21 @@ import { expect, test } from '@playwright/test';
 const VALID_LSCOLORS = 'exfxcxdxbxegedabagacad';
 
 test.describe('page load', () => {
-	test('page loads with h1', async ({ page }) => {
+	test.beforeEach(async ({ page }) => {
 		await page.goto('/');
+	});
+
+	test('page loads with h1', async ({ page }) => {
 		await expect(page.locator('h1')).toBeVisible();
 		await expect(page.locator('h1')).toContainText('LSCOLORS');
 		await expect(page.locator('h1')).toContainText('LS_COLORS');
 	});
 
 	test('LSCOLORS input is visible', async ({ page }) => {
-		await page.goto('/');
 		await expect(page.locator('#lscolors-input')).toBeVisible();
 	});
 
 	test('LS_COLORS textarea is visible', async ({ page }) => {
-		await page.goto('/');
 		await expect(page.locator('#ls-colors-input')).toBeVisible();
 	});
 });
@@ -39,7 +40,7 @@ test.describe('LSCOLORS → LS_COLORS conversion', () => {
 		const input = page.locator('#lscolors-input');
 
 		await input.fill('ZZ');
-		const error = page.locator('[role="alert"]').first();
+		const error = page.locator('#lscolors-error');
 		await expect(error).toBeVisible();
 		await expect(error).not.toHaveText('');
 	});

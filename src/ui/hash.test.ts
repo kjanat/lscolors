@@ -57,6 +57,10 @@ describe('decodeHash', () => {
 		expect(decodeHash('#lscolors=')).toBeNull();
 	});
 
+	it('returns null for malformed percent-encoding', () => {
+		expect(decodeHash('#lscolors=%ZZ')).toBeNull();
+	});
+
 	it('decodes LSCOLORS hash', () => {
 		expect(decodeHash('#lscolors=exfxcxdxbxegedabagacad')).toEqual({
 			source: 'lscolors-to-ls_colors',

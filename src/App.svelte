@@ -140,8 +140,11 @@ let hashFragment: string = $derived.by(() => {
 
 let permalinkUrl: string = $derived(
 	hashFragment === ''
-		? window.location.pathname + window.location.search
-		: window.location.pathname + window.location.search + hashFragment,
+		? window.location.origin + window.location.pathname + window.location.search
+		: window.location.origin +
+				window.location.pathname +
+				window.location.search +
+				hashFragment,
 );
 
 $effect(() => {

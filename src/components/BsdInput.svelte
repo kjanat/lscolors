@@ -30,12 +30,15 @@ let {
 			spellcheck="false"
 			autocomplete="off"
 			placeholder="exfxcxdxbxegedabagacad"
+			aria-describedby={error !== '' ? 'lscolors-error' : undefined}
+			aria-invalid={error !== ''}
 			bind:value
 			{oninput}
 		>
 		<CopyButton text={value} aria-label="Copy LSCOLORS value" />
 	</div>
 	<div
+		id="lscolors-error"
 		class="error"
 		role="alert"
 		aria-live="polite"

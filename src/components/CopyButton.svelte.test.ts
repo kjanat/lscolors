@@ -36,6 +36,19 @@ describe('CopyButton', () => {
 		await expect.element(button).toHaveTextContent('Copied!');
 	});
 
+	it('does not show copied on clipboard failure', async () => {
+		const writeText = vi.fn(() => Promise.reject(new Error('denied')));
+		vi.stubGlobal('navigator', { clipboard: { writeText } });
+
+		const screen = render(CopyButton, { text: 'fail' });
+		const button = screen.getByRole('button');
+
+		await button.click();
+
+		expect(writeText).toHaveBeenCalledWith('fail');
+		await expect.element(button).toHaveTextContent('Copy');
+	});
+
 	it('resets label after timeout', async () => {
 		vi.useFakeTimers();
 		const writeText = vi.fn(() => Promise.resolve());

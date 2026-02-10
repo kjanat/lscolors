@@ -12,20 +12,24 @@ let { text, label = 'Copy', class: className = '', ...rest }: Props = $props();
 
 let copied = $state(false);
 let timeoutId: ReturnType<typeof setTimeout> | undefined = $state(undefined);
+let clickGeneration = 0;
 
 async function handleClick(): Promise<void> {
 	if (timeoutId !== undefined) {
 		clearTimeout(timeoutId);
 		timeoutId = undefined;
 	}
+	const gen = ++clickGeneration;
 	try {
 		await navigator.clipboard.writeText(text);
+		if (gen !== clickGeneration) return;
 		copied = true;
 		timeoutId = setTimeout(() => {
 			copied = false;
 			timeoutId = undefined;
 		}, 1200);
 	} catch {
+		if (gen !== clickGeneration) return;
 		copied = false;
 	}
 }
@@ -75,8 +79,8 @@ onDestroy(() => {
 }
 
 .copy-btn.copied {
-	color: #66bb6a;
-	border-color: #66bb6a;
+	color: var(--success);
+	border-color: var(--success);
 }
 
 @media (max-width: 480px) {

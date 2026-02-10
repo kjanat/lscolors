@@ -12,8 +12,7 @@
 			"!!**/dist",
 			"!!**/.jj",
 			"!!**/coverage",
-			"!!**/*.*_cache",
-			"!!**/*.svelte"
+			"!!**/*.*_cache"
 		],
 		"ignoreUnknown": true
 	},
@@ -32,7 +31,7 @@
 	},
 	"javascript": { "formatter": { "quoteStyle": "single" } },
 	"html": { "experimentalFullSupportEnabled": true },
-	"css": { "parser": { "tailwindDirectives": true } },
+	"css": { "parser": { "tailwindDirectives": true, "cssModules": true } },
 	"assist": {
 		"enabled": true,
 		"actions": {
@@ -55,6 +54,13 @@
 				"correctness": {
 					"noUnusedVariables": "off",
 					"noUnusedImports": "off"
+				}
+			}
+		},
+		"assist": {
+			"actions": {
+				"source": {
+					"organizeImports": "off"
 				}
 			}
 		}

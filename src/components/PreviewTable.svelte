@@ -1,17 +1,17 @@
 <script lang="ts">
 import {
-	BSD_SLOTS,
 	BSD_SLOT_LABELS,
+	BSD_SLOTS,
 	type BsdSlot,
 	type BsdSlotColors,
 	type SlotCssColors,
 } from '../types.ts';
 import {
-	SLOT_SAMPLE_TEXT,
-	DEFAULT_FG,
-	DEFAULT_BG,
 	bsdCharsToSgr,
+	DEFAULT_BG,
+	DEFAULT_FG,
 	formatHex,
+	SLOT_SAMPLE_TEXT,
 } from './preview.ts';
 
 interface Props {
@@ -25,7 +25,7 @@ const { cssMap, bsdMap, class: className = '' }: Props = $props();
 
 {#if cssMap !== null && bsdMap !== null}
 	<div class="preview {className}">
-		<table class="preview-table" role="presentation">
+		<table class="preview-table">
 			<thead>
 				<tr>
 					<th>Slot</th>
@@ -73,10 +73,6 @@ const { cssMap, bsdMap, class: className = '' }: Props = $props();
 <style>
 .preview {
 	margin-top: 1.5rem;
-}
-
-.preview:empty {
-	display: none;
 }
 
 .preview-table {
