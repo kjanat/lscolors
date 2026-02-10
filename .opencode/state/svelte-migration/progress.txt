@@ -40,6 +40,7 @@ Started: 2026-02-10
 - **Biome + Svelte**: `.svelte` files ignored in biome.json (Biome parses them via HTML support but gives false positives on Svelte patterns like reactive `let`). Biome formatter also disabled (dprint handles it via markup_fmt).
 - **dprint + Svelte**: markup_fmt plugin already formats `.svelte` files out of the box. No extra config needed.
 - **svelte-check**: runs via `bun run check`. Uses `--tsconfig ./tsconfig.json`.
+- **Mount pattern**: `mount(App, { target })` where target is `<div id="app">`. Component renders `<main>` (no id) inside it. CSS `#app` styles apply to the wrapper div.
 - **Pre-existing issues**: Biome formatter disagrees with dprint on trailing commas in jsonc and CSS transition shorthand formatting. Test project filtering (`--project server`) doesn't work with vitest 4 inline project config.
 
 ---
@@ -53,3 +54,16 @@ Started: 2026-02-10
 - Created minimal `src/App.svelte` placeholder (`<h1>LSCOLORS</h1>`)
 - Files changed: biome.json, package.json, tsconfig.json (no change needed), src/App.svelte, src/svelte-shims.d.ts, svelte.config.js
 - **Learnings:** svelte-check needs explicit `declare module '*.svelte'` in a .d.ts included by tsconfig; `/// <reference types="svelte" />` alone doesn't work. markup_fmt handles .svelte formatting. Most toolchain was already wired in prep commit.
+
+## Task - app-root
+- Rewrote `src/App.svelte` from placeholder to full monolithic component with all state, handlers, derived values, preview table, and clipboard logic
+- Rewrote `src/main.ts` to `mount(App, { target })` with `instanceof HTMLElement` null check
+- Stripped `index.html` to `<div id="app">` + script tag (Svelte renders `<main>` inside)
+- State: 5 `$state` runes (direction, lscolorsValue, lsColorsValue, lscolorsError, lsColorsError)
+- Derived: directionLabel, swapIcon, previewCssMap, previewBsdMap via `$derived`/`$derived.by`
+- URL hash init runs synchronously before `$effect` to avoid stale-mount
+- `$effect` syncs state → URL hash via `history.replaceState`
+- Preview table uses `{#each BSD_SLOTS as slot (slot)}` with `{@const}` bindings + `style:` directives
+- Clipboard: inline `copyToClipboard(event, text)` with `instanceof HTMLButtonElement` guard
+- Files changed: src/App.svelte, src/main.ts, index.html
+- **Learnings:** Svelte `mount()` renders component DOM *inside* the target element, so `<main id="app">` in the component would create duplicate IDs with `<div id="app">` mount target. Removed the id from `<main>`. CSS `#app` styles apply to the wrapper div. `bind:value` + `oninput` handler works without re-entrant guard — Svelte handles it. `maxlength` and `rows` should be expressions (`maxlength={22}`, `rows={4}`) not string attributes.

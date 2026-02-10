@@ -13,7 +13,7 @@
 			"id": "app-root",
 			"title": "App.svelte root component + state",
 			"category": "architecture",
-			"passes": false,
+			"passes": true,
 			"details": "Create src/App.svelte with all state ($state: direction, lscolorsValue, lsColorsValue, lscolorsError, lsColorsError), conversion handlers (handleLscolorsInput, handleLsColorsInput), derived values ($derived: directionLabel, swapIcon, previewData), direction swap handler. Rewrite src/main.ts to mount(App, { target }) with runtime null check (no ! assertion). Strip index.html to <div id='app'></div> + script. Inline full current HTML structure monolithically in App.svelte (extract components later). Done when: app renders, both conversion directions work in dev server."
 		},
 		{
