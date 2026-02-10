@@ -1,0 +1,40 @@
+# Progress Log
+PRD: svelte-migration
+Started: 2026-02-10
+
+## Codebase Patterns
+- **PM**: bun (not npm). Use `bun run build`, `bun test`, `bun install`
+- **Strict TS**: noUncheckedIndexedAccess, exactOptionalPropertyTypes, no any, no `as`, no `!`
+- **Vite base**: `/lscolors/` for GitHub Pages
+- **VCS**: jj (colocated with git), default branch `master`
+- **Formatter**: dprint (run `bun run format`)
+- **Linter**: Biome (run `bun run lint`), formatter disabled in Biome
+- **Testing**: Vitest, co-located *.test.ts, BDD style (describe/it), explicit imports
+- **Pure logic layer**: bsd.ts, gnu.ts, sgr.ts, convert.ts, types.ts — NEVER modify
+- **Svelte**: Svelte 5 runes ($state, $derived, $effect), no SvelteKit
+- **Svelte MCP tools**: Use `svelte-file-editor` agent for .svelte files. Available tools:
+  `list-sections` → discover docs, `get-documentation` → fetch docs, `svelte-autofixer` → validate code (MUST use before committing .svelte files). Call list-sections first, then get-documentation for relevant sections.
+- **Overseer**: After completing each PRD task, also complete the matching Overseer task.
+  Milestone: `task_01KH2KFK9HCYEMCKGB3JW2ESGE`
+  Use `tasks.search("<task title>")` to find the Overseer task, then:
+  `await tasks.complete("<overseer-task-id>", { result: "<what was done>" })`
+  PRD task ID → Overseer task mapping:
+  - toolchain-setup    → task_01KH2KHFNJBZM7S5J5P2427VQV
+  - app-root           → task_01KH2KHFPN3AM2VGW20W92N0DW
+  - copy-button        → task_01KH2KHFTBV2CJENNA6N2DTJ5W
+  - lscolors-input     → task_01KH2KHFQK87YSQYS96X8TFXDG
+  - ls-colors-input    → task_01KH2KHFRG2489XPKFSYATGT81
+  - swap-control       → task_01KH2KHFSE3H59VZTHRTD4ASQF
+  - share-button       → task_01KH2KHFV9R8STA5F15B3K5H87
+  - preview-table      → task_01KH2KHFW6N3CZE6B757BPZ68A
+  - hash-permalink     → task_01KH2KHFX40SGZHZM8SS92ZN3E
+  - styles-migration   → task_01KH2KHFXXB28YH43K4HF5K8PX
+  - delete-old-ui      → task_01KH2KHFYTCVTY6SEG9NFQ13BV
+  - format-all         → task_01KH2M3KDTZ5D1E7309XENJ0Q0
+  - component-tests    → task_01KH2M3KEQDC0FXN48Y425A167
+  - e2e-tests          → task_01KH2M3KFMFJ5WJXKYK7QMF39A
+  - update-agents-md   → task_01KH2M3KGHC3C200J6Y0NRHD10
+  - verify-all         → task_01KH2KHFZJ2TD769NCNNPGTGE9
+
+---
+<!-- Task logs below - APPEND ONLY -->

@@ -7,7 +7,13 @@
 		"defaultBranch": "master"
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache"],
+		"includes": [
+			"**",
+			"!!**/dist",
+			"!!**/.jj",
+			"!!**/coverage",
+			"!!**/.*_cache"
+		],
 		"ignoreUnknown": true
 	},
 	"formatter": {
@@ -30,7 +36,10 @@
 		"enabled": true,
 		"actions": {
 			"source": {
-				"organizeImports": "on"
+				"recommended": true,
+				"organizeImports": "on",
+				"useSortedAttributes": "on",
+				"useSortedProperties": "on"
 			}
 		}
 	}

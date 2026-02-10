@@ -49,7 +49,13 @@
 			},
 		],
 	},
-	"excludes": ["**/node_modules", "**/*-lock.json", "**/.venv", "**/bun.lock*"],
+	"excludes": [
+		"**/node_modules",
+		"**/*-lock.json",
+		"**/.venv",
+		"**/bun.lock*",
+		"**/.opencode/state",
+	],
 	"plugins": [
 		"https://plugins.dprint.dev/json-0.21.1.wasm",
 		"https://plugins.dprint.dev/markdown-0.21.1.wasm",

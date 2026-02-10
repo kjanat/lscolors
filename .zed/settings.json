@@ -7,7 +7,34 @@
 	"formatter": {
 		"external": {
 			"command": "dprint",
-			"arguments": ["fmt", "-c=dprint.jsonc", "--config-discovery=false", "--stdin", "{buffer_path}"]
+			"arguments": [
+				"fmt",
+				"-c=dprint.jsonc",
+				"--config-discovery=false",
+				"--stdin",
+				"{buffer_path}"
+			]
+		}
+	},
+	"languages": {
+		"TypeScript": {
+			"language_servers": ["vtsls", "tsgo", "biome"],
+			"formatter": [
+				{ "code_action": "fixAll.biome" },
+				{ "code_action": "organizeImports.biome" },
+				{
+					"external": {
+						"command": "dprint",
+						"arguments": [
+							"fmt",
+							"-c=dprint.jsonc",
+							"--config-discovery=false",
+							"--stdin",
+							"{buffer_path}"
+						]
+					}
+				}
+			]
 		}
 	}
 }
