@@ -43,6 +43,7 @@ Started: 2026-02-10
 - **svelte-check**: runs via `bun run check`. Uses `--tsconfig ./tsconfig.json`.
 - **Mount pattern**: `mount(App, { target })` where target is `<div id="app">`. Component renders `<main>` (no id) inside it. CSS `#app` styles apply to the wrapper div.
 - **Pre-existing issues**: Biome formatter disagrees with dprint on trailing commas in jsonc and CSS transition shorthand formatting. Test project filtering (`--project server`) doesn't work with vitest 4 inline project config.
+- **Component naming**: Avoid case-only filename collisions (e.g. `LscolorsInput` vs `LsColorsInput`). TS `forceConsistentCasingInFileNames` can't fully suppress this. Use semantically distinct names: `BsdInput.svelte` / `GnuInput.svelte`.
 
 ---
 <!-- Task logs below - APPEND ONLY -->
@@ -86,3 +87,13 @@ Started: 2026-02-10
 - Updated App.svelte: imported LscolorsInput, replaced 25-line inline markup with `<LscolorsInput bind:value={lscolorsValue} error={lscolorsError} oninput={handleLscolorsInput} />`
 - Files changed: src/components/LscolorsInput.svelte (new), src/App.svelte
 - **Learnings:** For wrapper components (div root, not input root), use `HTMLAttributes<HTMLDivElement>` not `HTMLInputAttributes`. `bind:value` on the component prop + `bind:value` on internal `<input>` chains correctly. `{oninput}` shorthand passes parent callback directly to child input element. dprint/markup_fmt auto-reformats `$props()` destructuring to multiline when >3 props.
+
+## Task - ls-colors-input
+- Created `src/components/GnuInput.svelte` — GNU LS_COLORS textarea component mirroring BsdInput pattern
+- Props: `value` ($bindable), `error` (string), `oninput` (() => void), `class` (CSS passthrough), `...rest` spread via `HTMLAttributes<HTMLDivElement>`
+- Renders: `.field.field--ls-colors` wrapper, label with hint, textarea rows=4, CopyButton, error div with role=alert + aria-live
+- Renamed `LscolorsInput.svelte` → `BsdInput.svelte` and `LsColorsInput.svelte` → `GnuInput.svelte` to fix TS case-collision diagnostic
+- Updated App.svelte imports: `BsdInput` / `GnuInput` + template references
+- Removed `forceConsistentCasingInFileNames: false` workaround (no longer needed)
+- Files changed: src/components/GnuInput.svelte (new), src/components/BsdInput.svelte (renamed), src/App.svelte
+- **Learnings:** TypeScript's casing diagnostic fires even with `forceConsistentCasingInFileNames: false` when both files are globbed via `include`. Avoid case-only filename collisions entirely — use semantically distinct names. `bind:value` on `<textarea>` works identically to `<input>`.

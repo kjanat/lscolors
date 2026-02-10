@@ -34,7 +34,7 @@
 			"id": "ls-colors-input",
 			"title": "Extract LsColorsInput component",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Extract GNU LS_COLORS <textarea> from App.svelte into src/components/LsColorsInput.svelte. Props: value ($bindable), error (string), oninput (() => void). Renders: label, textarea rows=4, CopyButton, error div with role=alert. Done when: bind:value works, oninput triggers conversion, error displays."
 		},
 		{

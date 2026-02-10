@@ -14,7 +14,8 @@ import {
 import { parseLscolors, bsdCharToAnsiFg, bsdCharToAnsiBg } from './bsd.ts';
 import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
 import CopyButton from './components/CopyButton.svelte';
-import LscolorsInput from './components/LscolorsInput.svelte';
+import BsdInput from './components/BsdInput.svelte';
+import GnuInput from './components/GnuInput.svelte';
 import './style.css';
 
 const SLOT_SAMPLE_TEXT: Readonly<Record<BsdSlot, string>> = {
@@ -200,7 +201,7 @@ $effect(() => {
 
 	<div class="converter">
 		<!-- LSCOLORS input field -->
-		<LscolorsInput
+		<BsdInput
 			bind:value={lscolorsValue}
 			error={lscolorsError}
 			oninput={handleLscolorsInput}
@@ -220,30 +221,11 @@ $effect(() => {
 		</div>
 
 		<!-- LS_COLORS textarea -->
-		<div class="field field--ls-colors">
-			<label for="ls-colors-input">LS_COLORS <span class="label-hint"
-				>(GNU/Linux dircolors)</span></label>
-			<div class="input-row">
-				<textarea
-					id="ls-colors-input"
-					rows={4}
-					spellcheck="false"
-					autocomplete="off"
-					placeholder="di=34:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=34;43"
-					bind:value={lsColorsValue}
-					oninput={handleLsColorsInput}
-				></textarea>
-				<CopyButton text={lsColorsValue} aria-label="Copy LS_COLORS value" />
-			</div>
-			<div
-				class="error"
-				role="alert"
-				aria-live="polite"
-				hidden={lsColorsError === ''}
-			>
-				{lsColorsError}
-			</div>
-		</div>
+		<GnuInput
+			bind:value={lsColorsValue}
+			error={lsColorsError}
+			oninput={handleLsColorsInput}
+		/>
 	</div>
 
 	<!-- Share permalink -->
