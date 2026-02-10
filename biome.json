@@ -7,7 +7,7 @@
 		"defaultBranch": "master"
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache"]
+		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache", "!!**/webpages"]
 	},
 	"formatter": {
 		"enabled": false

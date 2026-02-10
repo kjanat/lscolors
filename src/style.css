@@ -192,10 +192,6 @@ textarea {
 	min-height: 1.125rem;
 }
 
-.error:empty {
-	display: none;
-}
-
 /* Swap button */
 
 .swap-container {

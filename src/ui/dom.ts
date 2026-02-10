@@ -33,6 +33,7 @@ export function getDiv(id: string): HTMLDivElement {
 /** Show an error message in the given container, or clear it */
 export function setError(container: HTMLDivElement, message: string): void {
 	container.textContent = message;
+	container.hidden = message === '';
 }
 
 /** Extract a human-readable message from a caught error */
