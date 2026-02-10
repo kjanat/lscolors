@@ -67,21 +67,20 @@ let swapIcon: string = $derived(
 	direction === 'lscolors-to-ls_colors' ? '↓' : '↑',
 );
 
-let previewCssMap: Map<BsdSlot, SlotCssColors> | null = $derived.by(() => {
-	if (lscolorsValue.length !== 22) return null;
+let previewMaps: {
+	readonly css: Map<BsdSlot, SlotCssColors> | null;
+	readonly bsd: Map<BsdSlot, BsdSlotColors> | null;
+} = $derived.by(() => {
+	if (lscolorsValue.length !== 22) return { css: null, bsd: null };
 	try {
-		return lscolorsToCssMap(lscolorsValue);
+		// parseLscolors is called once here; lscolorsToCssMap calls it again
+		// internally, but both parse the same input — they succeed or fail together.
+		return {
+			css: lscolorsToCssMap(lscolorsValue),
+			bsd: parseLscolors(lscolorsValue),
+		};
 	} catch {
-		return null;
-	}
-});
-
-let previewBsdMap: Map<BsdSlot, BsdSlotColors> | null = $derived.by(() => {
-	if (lscolorsValue.length !== 22) return null;
-	try {
-		return parseLscolors(lscolorsValue);
-	} catch {
-		return null;
+		return { css: null, bsd: null };
 	}
 });
 
@@ -212,7 +211,7 @@ $effect(() => {
 	<ShareButton url={permalinkUrl} />
 
 	<!-- Preview table: 11 BSD slots -->
-	<PreviewTable cssMap={previewCssMap} bsdMap={previewBsdMap} />
+	<PreviewTable cssMap={previewMaps.css} bsdMap={previewMaps.bsd} />
 </main>
 
 <style>
