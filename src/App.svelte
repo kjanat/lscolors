@@ -12,8 +12,7 @@ import {
 } from './convert.ts';
 import { parseLscolors } from './bsd.ts';
 import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
-import BsdInput from './components/BsdInput.svelte';
-import GnuInput from './components/GnuInput.svelte';
+import ColorInput from './components/ColorInput.svelte';
 import PreviewTable from './components/PreviewTable.svelte';
 import ShareButton from './components/ShareButton.svelte';
 import SwapControl from './components/SwapControl.svelte';
@@ -190,20 +189,32 @@ $effect(() => {
 
 	<div class="converter">
 		<!-- LSCOLORS input field -->
-		<BsdInput
+		<ColorInput
 			bind:value={lscolorsValue}
 			error={lscolorsError}
 			oninput={handleLscolorsInput}
+			label="LSCOLORS"
+			hint="BSD/macOS, 22 chars"
+			id="lscolors"
+			maxlength={22}
+			placeholder="exfxcxdxbxegedabagacad"
+			class="bsd-input"
 		/>
 
 		<!-- Swap direction -->
 		<SwapControl icon={swapIcon} label={directionLabel} onswap={handleSwap} />
 
 		<!-- LS_COLORS textarea -->
-		<GnuInput
+		<ColorInput
 			bind:value={lsColorsValue}
 			error={lsColorsError}
 			oninput={handleLsColorsInput}
+			label="LS_COLORS"
+			hint="GNU/Linux, colon-delimited"
+			id="ls-colors"
+			multiline
+			rows={2}
+			placeholder="di=01;34:ln=01;36:so=01;35:pi=33:ex=01;32:bd=01;33:cd=01;33:su=37;41:sg=30;43:tw=30;42:ow=34;42"
 		/>
 	</div>
 
@@ -223,6 +234,7 @@ header {
 h1 {
 	font-size: 1.5rem;
 	font-weight: 600;
+	color: var(--error);
 	letter-spacing: -0.02em;
 }
 
@@ -265,6 +277,12 @@ h1 {
 	}
 }
 
+/* BSD-specific: wider letter-spacing for dense 22-char string */
+.converter :global(.bsd-input input) {
+	font-size: 1rem;
+	letter-spacing: 0.1em;
+}
+
 @media (max-width: 375px) {
 	h1 {
 		font-size: 1.05rem;
@@ -272,6 +290,11 @@ h1 {
 
 	.converter {
 		gap: 0.75rem;
+	}
+
+	.converter :global(.bsd-input input) {
+		font-size: 0.85rem;
+		letter-spacing: 0.05em;
 	}
 }
 </style>

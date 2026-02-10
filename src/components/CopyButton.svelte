@@ -10,6 +10,9 @@ interface Props extends HTMLButtonAttributes {
 
 let { text, label = 'Copy', class: className = '', ...rest }: Props = $props();
 
+const copiedLabel = 'Copied!';
+let wider: string = $derived(label.length >= copiedLabel.length ? label : copiedLabel);
+
 let copied = $state(false);
 let timeoutId: ReturnType<typeof setTimeout> | undefined = $state(undefined);
 let clickGeneration = 0;
@@ -49,17 +52,19 @@ onDestroy(() => {
 	onclick={handleClick}
 	{...rest}
 >
+	<span class="copy-btn-sizer" aria-hidden="true">{wider}</span>
 	<span class="copy-btn-label" aria-live="polite" aria-atomic="true">{
-		copied ? 'Copied!' : label
+		copied ? copiedLabel : label
 	}</span>
 </button>
 
 <style>
 .copy-btn {
+	display: inline-grid;
 	flex-shrink: 0;
-	padding: 0.5rem 0.75rem;
+	padding: 0.25rem 0.5rem;
 	font-family: var(--font-mono);
-	font-size: 0.75rem;
+	font-size: 0.7rem;
 	color: var(--fg-muted);
 	white-space: nowrap;
 	cursor: pointer;
@@ -69,10 +74,18 @@ onDestroy(() => {
 	transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 
+.copy-btn-sizer,
+.copy-btn-label {
+	grid-area: 1 / 1;
+}
+
+.copy-btn-sizer {
+	visibility: hidden;
+}
+
 .copy-btn:hover {
 	color: var(--fg);
-	background: var(--bg-input);
-	border-color: var(--accent-hover);
+	border-color: var(--accent);
 }
 
 .copy-btn:focus-visible {
@@ -83,14 +96,5 @@ onDestroy(() => {
 .copy-btn.copied {
 	color: var(--success);
 	border-color: var(--success);
-}
-
-@media (max-width: 480px) {
-	.copy-btn {
-		min-width: 2.75rem;
-		min-height: 2.75rem;
-		padding: 0.5rem 1rem;
-		font-size: 0.8rem;
-	}
 }
 </style>

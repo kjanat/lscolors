@@ -26,13 +26,19 @@ let { url, class: className = '', ...rest }: Props = $props();
 	margin-top: 0.5rem;
 }
 
-/* Target the child CopyButton's rendered element via :global */
+/* Standalone share button needs visible border */
 .share-row :global(.share-btn) {
 	padding: 0.375rem 1.25rem;
+	background: var(--bg-surface);
+	border-color: var(--border);
+}
+
+.share-row :global(.share-btn:hover) {
+	border-color: var(--accent-hover);
 }
 
 .share-row :global(.share-btn.copied) {
-	color: var(--success, #22c55e);
-	border-color: var(--success, #22c55e);
+	color: var(--success);
+	border-color: var(--success);
 }
 </style>

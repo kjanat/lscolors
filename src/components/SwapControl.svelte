@@ -38,17 +38,18 @@ let { icon, label, onswap, class: className = '', ...rest }: Props = $props();
 	width: 2.25rem;
 	height: 2.25rem;
 	font-size: 1.1rem;
-	color: var(--accent);
+	color: var(--orange);
 	cursor: pointer;
 	background: var(--bg-surface);
 	border: 1px solid var(--border);
 	border-radius: var(--radius);
-	transition: background-color 0.15s, border-color 0.15s;
+	transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .swap-btn:hover {
+	color: var(--fg);
 	background: var(--bg-input);
-	border-color: var(--accent-hover);
+	border-color: var(--orange);
 }
 
 .swap-btn:focus-visible {

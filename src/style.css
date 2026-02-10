@@ -15,18 +15,22 @@
 		Consolas,
 		"DejaVu Sans Mono",
 		monospace;
-	--bg: #1a1a2e;
-	--bg-surface: #16213e;
-	--bg-input: #0f1729;
-	--fg: #e0e0e0;
-	--fg-muted: #8a8a9a;
-	--fg-label: #c4c4d4;
-	--accent: #64b5f6;
-	--accent-hover: #90caf9;
-	--error: #ef5350;
-	--border: #2a2a4a;
-	--border-focus: #64b5f6;
-	--success: #66bb6a;
+
+	/* Monokai-inspired palette */
+	--bg: #272822;
+	--bg-surface: #3e3d32;
+	--bg-input: #1e1f1c;
+	--fg: #f8f8f2;
+	--fg-muted: #75715e;
+	--fg-label: #e6db74;
+	--accent: #66d9ef;
+	--accent-hover: #a1eff5;
+	--error: #f92672;
+	--border: #49483e;
+	--border-focus: #66d9ef;
+	--success: #a6e22e;
+	--orange: #fd971f;
+	--purple: #ae81ff;
 	--radius: 6px;
 }
 
@@ -34,6 +38,11 @@ html {
 	font-size: 16px;
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
+	scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+	display: none;
 }
 
 body {
@@ -70,7 +79,7 @@ input:focus,
 textarea:focus {
 	outline: none;
 	border-color: var(--border-focus);
-	box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.15);
+	box-shadow: 0 0 0 2px rgba(102, 217, 239, 0.15);
 }
 
 input::placeholder,
@@ -80,8 +89,14 @@ textarea::placeholder {
 }
 
 textarea {
-	min-height: 4rem;
+	min-height: 3rem;
+	max-height: 20vh;
 	resize: vertical;
+	scrollbar-width: none;
+}
+
+textarea::-webkit-scrollbar {
+	display: none;
 }
 
 /* -------------------------

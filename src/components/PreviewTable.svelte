@@ -108,7 +108,7 @@ const { cssMap, bsdMap, class: className = '' }: Props = $props();
 .preview-slot {
 	width: 3rem;
 	font-weight: 600;
-	color: var(--accent);
+	color: var(--purple);
 }
 
 .preview-label {
