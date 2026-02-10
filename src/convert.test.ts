@@ -204,6 +204,44 @@ describe('lsColorsToLscolors', () => {
 		const map = parseLscolors(result);
 		expect(map.get('di')?.bg).toBe('x');
 	});
+
+	it('handles truecolor fg (38;2;r;g;b) → nearest 16-color', () => {
+		// Pure red (255,0,0) → nearest is bright red (91) → 'B'
+		const result = lsColorsToLscolors('di=38;2;255;0;0');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.fg).toBe('B');
+	});
+
+	it('handles truecolor bg (48;2;r;g;b) → nearest 16-color', () => {
+		// Pure blue truecolor bg → maps to blue bg (e)
+		const result = lsColorsToLscolors('di=34;48;2;0;0;255');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.bg).toBe('e');
+	});
+
+	it('bold + truecolor fg produces uppercase', () => {
+		// Bold + pure green truecolor → maps to bright green (C)
+		const result = lsColorsToLscolors('di=01;38;2;0;255;0');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.fg).toBe('C');
+	});
+
+	it('truecolor fg + truecolor bg combined', () => {
+		// Bright red fg + blue bg
+		const result = lsColorsToLscolors('di=38;2;255;0;0;48;2;0;0;238');
+		const map = parseLscolors(result);
+		expect(map.get('di')?.fg).toBe('B');
+		expect(map.get('di')?.bg).toBe('e');
+	});
+
+	it('reverse video with truecolor swaps fg/bg', () => {
+		// Bright red truecolor fg + normal green truecolor bg + reverse
+		const result = lsColorsToLscolors('di=38;2;255;0;0;48;2;0;205;0;7');
+		const map = parseLscolors(result);
+		// After swap: fg=green approx (c), bg=bright red approx (B)
+		expect(map.get('di')?.fg).toBe('c');
+		expect(map.get('di')?.bg).toBe('B');
+	});
 });
 
 // -------------------------

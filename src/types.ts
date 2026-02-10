@@ -37,14 +37,21 @@ export interface BsdSlotColors {
 	readonly bg: string;
 }
 
-/** Parsed ANSI SGR style: basic codes + optional 256-color indices */
+/** RGB triplet [r, g, b] with values 0–255 */
+export type Rgb = readonly [number, number, number];
+
+/** Parsed ANSI SGR style: basic codes + optional extended color info */
 export interface Style {
 	/** SGR attribute codes (e.g. [1, 34] for bold blue) */
 	codes: readonly number[];
-	/** 256-color foreground index, if present */
+	/** 256-color foreground index (38;5;N), if present */
 	fg256?: number;
-	/** 256-color background index, if present */
+	/** 256-color background index (48;5;N), if present */
 	bg256?: number;
+	/** Truecolor foreground (38;2;r;g;b), if present */
+	fgRgb?: Rgb;
+	/** Truecolor background (48;2;r;g;b), if present */
+	bgRgb?: Rgb;
 }
 
 /** CSS hex representation of a color, or null for default/terminal-dependent */

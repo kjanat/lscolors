@@ -2,6 +2,7 @@
 	"name": "lscolors",
 	"version": "0.1.0",
 	"private": true,
+	"description": "Convert between macOS/BSD LSCOLORS and GNU LS_COLORS formats",
 	"repository": "github:kjanat/lscolors",
 	"type": "module",
 	"scripts": {

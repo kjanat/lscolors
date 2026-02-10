@@ -1,6 +1,7 @@
 # lscolors
 
-Convert between macOS/BSD `LSCOLORS` and GNU `LS_COLORS` (dircolors) formats.
+Convert between macOS/BSD `LSCOLORS` and GNU/Linux `LS_COLORS` (dircolors)
+formats.
 
 <details open>
 <summary>Screenshot</summary>
@@ -30,7 +31,7 @@ This tool converts between them in both directions with live preview.
 
 - Bidirectional live conversion as you type
 - Color preview swatches for all 11 BSD slots
-- 256-color to 16-color approximation (Euclidean RGB distance)
+- 256-color and truecolor to 16-color approximation (Euclidean RGB distance)
 - Copy to clipboard
 - Shareable permalink via URL hash
 
@@ -52,16 +53,17 @@ This tool converts between them in both directions with live preview.
 
 ## Limitations
 
-- **GNU -> BSD is lossy**: `LS_COLORS` supports file extension keys (`*.tar`),
-  bold, underline, blink, 256-color, and truecolor. These don't exist in
-  `LSCOLORS` and are dropped or approximated.
-- **256-color approximation**: Mapped to nearest of the 16 basic ANSI colors.
-  Close enough for a preview, not pixel-perfect.
+- **GNU → BSD is lossy**: `LS_COLORS` supports file extension keys (`*.tar`),
+  underline, blink, dim, italic, strikethrough, and other SGR attributes that
+  have no BSD equivalent — these are silently dropped.
+- **256-color and truecolor approximation**: Both 256-color (`38;5;N`) and
+  truecolor (`38;2;r;g;b`) are mapped to the nearest of the 16 basic ANSI colors
+  via Euclidean RGB distance. Close enough for a preview, not pixel-perfect.
 - **Only the 11 overlapping keys** are preserved when converting GNU to BSD.
-- **Bold (01) maps to uppercase**: GNU `01;34` (bold blue) produces uppercase
-  `E` in the BSD output, matching BSD convention.
-- **Last-wins overriding**: If multiple fg/bg codes appear (e.g. `34;35`), the
-  last code wins, consistent with terminal behavior.
+- **Bold (01) → uppercase**: GNU `01;34` (bold blue) produces uppercase `E` in
+  the BSD output, matching BSD convention.
+- **Last-wins**: If multiple fg/bg codes appear (e.g. `34;35`), the last code
+  wins, consistent with terminal behavior.
 - **Reverse video (07)**: ANSI code 7 swaps fg/bg in the BSD output.
 
 ## Why?

@@ -111,19 +111,30 @@ export function lsColorsToLscolors(
 // -------------------------
 
 function ansiStyleToBsdFgChar(st: Style): string {
+	const bold = st.codes.includes(1);
+
 	// Last-wins: use findLast so later codes override earlier ones (e.g. 34;35 → magenta)
 	const basic = st.codes.findLast((c) => (c >= 30 && c <= 37) || (c >= 90 && c <= 97));
 	if (basic !== undefined) {
 		let ch = ansiFgToBsdChar(basic);
 		// Bold (01) → uppercase BSD char (e.g. bold blue 01;34 → 'E')
-		if (st.codes.includes(1) && ch !== 'x') ch = ch.toUpperCase();
+		if (bold && ch !== 'x') ch = ch.toUpperCase();
 		return ch;
 	}
 
+	// Truecolor (38;2;r;g;b) → approximate to nearest 16-color
+	if (st.fgRgb !== undefined) {
+		const approx = rgbToNearestAnsi16Fg(st.fgRgb[0], st.fgRgb[1], st.fgRgb[2]);
+		let ch = ansiFgToBsdChar(approx);
+		if (bold && ch !== 'x') ch = ch.toUpperCase();
+		return ch;
+	}
+
+	// 256-color (38;5;N) → approximate to nearest 16-color
 	if (st.fg256 !== undefined) {
 		const approx = approx256ToAnsi16Fg(st.fg256);
 		let ch = ansiFgToBsdChar(approx);
-		if (st.codes.includes(1) && ch !== 'x') ch = ch.toUpperCase();
+		if (bold && ch !== 'x') ch = ch.toUpperCase();
 		return ch;
 	}
 
@@ -137,6 +148,13 @@ function ansiStyleToBsdBgChar(st: Style): string {
 	const basic = st.codes.findLast((c) => (c >= 40 && c <= 47) || (c >= 100 && c <= 107));
 	if (basic !== undefined) return ansiBgToBsdChar(basic);
 
+	// Truecolor (48;2;r;g;b) → approximate to nearest 16-color
+	if (st.bgRgb !== undefined) {
+		const approx = rgbToNearestAnsi16Bg(st.bgRgb[0], st.bgRgb[1], st.bgRgb[2]);
+		return ansiBgToBsdChar(approx);
+	}
+
+	// 256-color (48;5;N) → approximate to nearest 16-color
 	if (st.bg256 !== undefined) {
 		const approx = approx256ToAnsi16Bg(st.bg256);
 		return ansiBgToBsdChar(approx);
