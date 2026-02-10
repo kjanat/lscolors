@@ -188,3 +188,10 @@ Started: 2026-02-10
 - Installed Playwright chromium browser (needed by @vitest/browser-playwright)
 - Files changed: src/App.svelte.test.ts (expanded), src/components/{CopyButton,BsdInput,GnuInput,SwapControl,PreviewTable}.svelte.test.ts (new)
 - **Learnings:** `getByLabelText(/LSCOLORS/)` matches both the `<input>` AND the CopyButton with `aria-label="Copy LSCOLORS value"` — use `getByRole('textbox', { name: /LSCOLORS/ })` for unambiguous input selection. `getByRole('alert')` can't find elements with `hidden` attribute (removed from a11y tree) — use `getByText` or DOM queries instead. `navigator.clipboard` is read-only in real browsers — use `vi.stubGlobal` not `Object.assign`. PreviewTable's `role="presentation"` table makes `getByRole('presentation')` match all descendant elements — use `container.querySelectorAll` for CSS selector queries. `render()` returns `{ container }` for direct DOM access.
+
+## Task - e2e-tests
+- Wrote 19 Playwright e2e tests in `e2e/demo.test.ts` covering all PRD requirements
+- Tests: page load (h1, inputs visible), LSCOLORS→LS_COLORS conversion, LS_COLORS→LSCOLORS conversion, invalid input error display, swap button direction toggle + re-conversion, copy buttons exist, share button copies URL with Copied! feedback, permalink round-trip (both directions + hash update on input), preview table (11 rows, colored swatches, slot codes, hidden when empty), responsive layout at 375px
+- Updated `playwright.config.ts`: `npm run` → `bun run`, simplified config
+- Files changed: e2e/demo.test.ts (expanded from 1 to 19 tests), playwright.config.ts
+- **Learnings:** LSCOLORS↔LS_COLORS conversion is NOT lossless (includes extra or/mi defaults, different bold/color mappings) — don't assert exact converted values in e2e tests. Use regex patterns (`/di=\d/`, `/^[a-hA-Hx]{22}$/`) to verify conversion happened without coupling to specific output. `vite.config.ts` base is dynamic (`process.env.GITHUB_ACTIONS`) — don't hardcode `/lscolors/` baseURL in playwright config. Clipboard permission grant via `context.grantPermissions(['clipboard-read', 'clipboard-write'])` needed for share button e2e test.

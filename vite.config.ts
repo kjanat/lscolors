@@ -4,8 +4,9 @@ import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	base: process.env.GITHUB_ACTIONS === "true" ? '/lscolors/' : "",
+	base: process.env.GITHUB_ACTIONS === 'true' ? '/lscolors/' : '',
 	build: { outDir: 'dist' },
+	server: { allowedHosts: ['propc-manjaro'] },
 	test: {
 		expect: { requireAssertions: true },
 		projects: [

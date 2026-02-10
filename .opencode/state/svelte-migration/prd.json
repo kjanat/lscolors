@@ -97,7 +97,7 @@
 			"id": "e2e-tests",
 			"title": "Playwright e2e tests",
 			"category": "integration",
-			"passes": false,
+			"passes": true,
 			"details": "Write Playwright e2e tests in e2e/ (matched by playwright.config.ts testDir). Expand existing demo stub. Tests: page loads with h1, LSCOLORS input converts to LS_COLORS, LS_COLORS textarea converts to LSCOLORS, swap button toggles direction, copy buttons work, share button copies URL, permalink round-trip (navigate to hash URL, verify fields populated), preview table shows 11 rows with colored swatches, responsive layout at 375px viewport. Done when: bun run test:e2e passes."
 		},
 		{
