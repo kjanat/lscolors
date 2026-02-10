@@ -76,7 +76,7 @@
 			"id": "delete-old-ui",
 			"title": "Delete old UI code",
 			"category": "cleanup",
-			"passes": false,
+			"passes": true,
 			"details": "Delete src/ui/dom.ts (getElementById wrappers, replaced by Svelte bindings), src/ui/clipboard.ts (absorbed into CopyButton.svelte), src/ui/preview.ts (replaced by PreviewTable.svelte). Verify no remaining imports reference them. Delete src/index.ts barrel (dead code, private package). Clean up any unused type exports in types.ts. Done when: no dangling imports, bun run build succeeds."
 		},
 		{

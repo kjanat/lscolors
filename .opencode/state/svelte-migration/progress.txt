@@ -152,3 +152,14 @@ Started: 2026-02-10
 - Shared field/label/input-row/error styles duplicated in BsdInput + GnuInput (small, avoids global coupling)
 - Files changed: src/style.css, src/App.svelte, src/components/{CopyButton,BsdInput,GnuInput,SwapControl,ShareButton,PreviewTable}.svelte
 - **Learnings:** Svelte scoped styles can't reach into child components — use `:global()` within a scoped parent selector (`.share-row :global(.share-btn)`) to style child output. Duplicating small shared styles across 2 components is acceptable vs. global coupling when there's no common ancestor component. ID selectors should become class selectors in scoped styles — IDs are only needed for `<label for=>` accessibility, not styling.
+
+## Task - delete-old-ui
+- Deleted `src/ui/dom.ts` (getElementById wrappers — replaced by Svelte bindings)
+- Deleted `src/ui/clipboard.ts` (absorbed into CopyButton.svelte)
+- Deleted `src/ui/preview.ts` (replaced by PreviewTable.svelte + preview.ts helpers)
+- Deleted `src/index.ts` (dead barrel — private package, never imported)
+- Verified zero remaining imports reference any deleted file
+- All type exports in `types.ts` still actively used — no cleanup needed
+- `src/ui/` retains only `hash.ts` + `hash.test.ts` (still live)
+- Files deleted: src/ui/dom.ts, src/ui/clipboard.ts, src/ui/preview.ts, src/index.ts (249 lines removed)
+- **Learnings:** Clean deletion — Svelte migration absorbed all imperative DOM/clipboard/preview code into components. The barrel (`index.ts`) was dead code from day one (`"private": true` package). All types.ts exports remain in use by pure logic layer + Svelte components.
