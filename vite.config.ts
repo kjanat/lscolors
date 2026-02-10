@@ -4,7 +4,7 @@ import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	base: '/lscolors/',
+	base: process.env.GITHUB_ACTIONS === "true" ? '/lscolors/' : "",
 	build: { outDir: 'dist' },
 	test: {
 		expect: { requireAssertions: true },
