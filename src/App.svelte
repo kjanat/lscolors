@@ -128,19 +128,20 @@ function handleSwap(): void {
 
 // --- URL hash sync ---
 
-$effect(() => {
+let hashFragment: string = $derived.by(() => {
 	const sourceValue =
 		direction === 'lscolors-to-ls_colors' ? lscolorsValue : lsColorsValue;
-	const hash = encodeHash({ source: direction, value: sourceValue });
-	if (hash === '') {
-		history.replaceState(
-			null,
-			'',
-			window.location.pathname + window.location.search,
-		);
-	} else {
-		history.replaceState(null, '', hash);
-	}
+	return encodeHash({ source: direction, value: sourceValue });
+});
+
+let permalinkUrl: string = $derived(
+	hashFragment === ''
+		? window.location.pathname + window.location.search
+		: window.location.pathname + window.location.search + hashFragment,
+);
+
+$effect(() => {
+	history.replaceState(null, '', permalinkUrl);
 });
 </script>
 
@@ -187,7 +188,7 @@ $effect(() => {
 	</div>
 
 	<!-- Share permalink -->
-	<ShareButton url={window.location.href} />
+	<ShareButton url={permalinkUrl} />
 
 	<!-- Preview table: 11 BSD slots -->
 	<PreviewTable cssMap={previewCssMap} bsdMap={previewBsdMap} />

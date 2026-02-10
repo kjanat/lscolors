@@ -44,6 +44,7 @@ Started: 2026-02-10
 - **Mount pattern**: `mount(App, { target })` where target is `<div id="app">`. Component renders `<main>` (no id) inside it. CSS `#app` styles apply to the wrapper div.
 - **Pre-existing issues**: Biome formatter disagrees with dprint on trailing commas in jsonc and CSS transition shorthand formatting. Test project filtering (`--project server`) doesn't work with vitest 4 inline project config.
 - **Component naming**: Avoid case-only filename collisions (e.g. `LscolorsInput` vs `LsColorsInput`). TS `forceConsistentCasingInFileNames` can't fully suppress this. Use semantically distinct names: `BsdInput.svelte` / `GnuInput.svelte`.
+- **Reactive URLs**: `window.location.href` is NOT reactive in Svelte templates. To pass a URL that updates with hash state, derive it via `$derived` from the same reactive values the hash `$effect` uses.
 
 ---
 <!-- Task logs below - APPEND ONLY -->
@@ -123,3 +124,11 @@ Started: 2026-02-10
 - Removed unused imports from App.svelte: `BSD_SLOTS`, `BSD_SLOT_LABELS`, `bsdCharToAnsiFg`, `bsdCharToAnsiBg`
 - Files changed: src/components/PreviewTable.svelte (new), src/components/preview.ts (new), src/App.svelte
 - **Learnings:** Separating pure helpers (preview.ts) from the Svelte template (PreviewTable.svelte) keeps the component focused on rendering and makes helpers independently testable. The `{#if}` null guard on the component level is cleaner than the caller checking — encapsulates the "show/hide" logic. `{@const}` bindings in `{#each}` blocks provide per-iteration derived values without needing reactive state.
+
+## Task - hash-permalink
+- Hash integration was mostly done in `app-root` task; this task fixed ShareButton reactivity
+- Made share URL reactive: extracted `hashFragment` ($derived.by) and `permalinkUrl` ($derived) from inline $effect logic
+- `$effect` now just calls `history.replaceState(null, '', permalinkUrl)` — single responsibility
+- ShareButton receives `permalinkUrl` instead of static `window.location.href` — updates when hash changes
+- Files changed: src/App.svelte
+- **Learnings:** `window.location.href` in a Svelte template expression is NOT reactive — it captures once at render time. To keep share URLs in sync with hash state, derive the full URL from the same reactive state the $effect uses. Extracting `$derived` intermediates (`hashFragment`, `permalinkUrl`) from `$effect` body deduplicates logic and makes values available to both the effect and the template.

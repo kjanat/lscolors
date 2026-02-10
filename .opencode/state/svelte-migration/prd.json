@@ -62,7 +62,7 @@
 			"id": "hash-permalink",
 			"title": "Wire hash/permalink integration",
 			"category": "integration",
-			"passes": false,
+			"passes": true,
 			"details": "Wire src/ui/hash.ts (unchanged pure logic) via $effect in App.svelte. Import decodeHash/encodeHash. Initialize state from URL hash BEFORE declaring the $effect (avoid stale-mount issue). $effect syncs state changes to URL fragment via history.replaceState. Done when: permalink round-trip works — copy URL, open in new tab, fields populate and convert correctly."
 		},
 		{
