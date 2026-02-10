@@ -47,6 +47,7 @@ Started: 2026-02-10
 - **Reactive URLs**: `window.location.href` is NOT reactive in Svelte templates. To pass a URL that updates with hash state, derive it via `$derived` from the same reactive values the hash `$effect` uses.
 - **Scoped styles + child components**: Svelte scoped styles can't pierce child components. Use `.parent :global(.child-class)` to style rendered child output. Avoid bare `:global()` — always scope it under a local parent selector.
 - **ID vs class in scoped styles**: Use class selectors (`.foo`) not ID selectors (`#foo`) in scoped `<style>` blocks. Keep `id` attributes only for `<label for=>` accessibility.
+- **Browser tests**: Use `vitest-browser-svelte`'s `render()` + `screen.getByRole('textbox', { name: /.../ })` for form inputs (avoids `getByLabelText` matching `aria-label` on sibling buttons). For CSS selectors, use `const { container } = render(...)` then `container.querySelectorAll(...)`. For clipboard mocking: `vi.stubGlobal('navigator', { clipboard: { writeText } })` (not `Object.assign`). Hidden elements aren't in the a11y tree — use DOM queries instead of role queries.
 
 ---
 <!-- Task logs below - APPEND ONLY -->
@@ -175,3 +176,15 @@ Started: 2026-02-10
 - 107 unit tests pass
 - Files changed: biome.json, vitest.config.ts
 - **Learnings:** Biome formatter was `"enabled": true` despite project convention saying dprint is authoritative — config/convention mismatch. Disabling it properly eliminates the format conflict noise in `biome check`. Vitest default runner picks up `.svelte.test.ts` files that need browser pool — exclude them at config level, not via CLI flags.
+
+## Task - component-tests
+- Expanded `src/App.svelte.test.ts` from 1-test stub to 7 tests: heading, BSD input, GNU textarea, swap button, share button, conversion, error display
+- Created `src/components/CopyButton.svelte.test.ts` (4 tests): render label, custom label, clipboard copy + feedback, timeout reset
+- Created `src/components/BsdInput.svelte.test.ts` (7 tests): label, maxlength, value display, oninput callback, error show/hide, copy button
+- Created `src/components/GnuInput.svelte.test.ts` (7 tests): label, rows attr, value display, oninput callback, error show/hide, copy button
+- Created `src/components/SwapControl.svelte.test.ts` (4 tests): button render, icon, label, onswap callback
+- Created `src/components/PreviewTable.svelte.test.ts` (6 tests): null map renders nothing, table present, 11 rows, slot labels, sample text, slot codes
+- Total: 35 browser component tests across 6 files, all passing in chromium headless
+- Installed Playwright chromium browser (needed by @vitest/browser-playwright)
+- Files changed: src/App.svelte.test.ts (expanded), src/components/{CopyButton,BsdInput,GnuInput,SwapControl,PreviewTable}.svelte.test.ts (new)
+- **Learnings:** `getByLabelText(/LSCOLORS/)` matches both the `<input>` AND the CopyButton with `aria-label="Copy LSCOLORS value"` — use `getByRole('textbox', { name: /LSCOLORS/ })` for unambiguous input selection. `getByRole('alert')` can't find elements with `hidden` attribute (removed from a11y tree) — use `getByText` or DOM queries instead. `navigator.clipboard` is read-only in real browsers — use `vi.stubGlobal` not `Object.assign`. PreviewTable's `role="presentation"` table makes `getByRole('presentation')` match all descendant elements — use `container.querySelectorAll` for CSS selector queries. `render()` returns `{ container }` for direct DOM access.

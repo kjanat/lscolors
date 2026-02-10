@@ -90,7 +90,7 @@
 			"id": "component-tests",
 			"title": "Svelte component browser tests",
 			"category": "architecture",
-			"passes": false,
+			"passes": true,
 			"details": "Write vitest-browser-svelte tests in src/*.svelte.test.ts (matched by vitest client project: src/**/*.svelte.{test,spec}.{js,ts}). Uses render() from vitest-browser-svelte + page from vitest/browser. Tests: App.svelte renders h1 (expand existing stub), CopyButton copies text and shows feedback, LscolorsInput accepts input and triggers oninput, LsColorsInput textarea works, SwapControl toggles, PreviewTable renders 11 slots. BDD style (describe/it). Done when: bun run test:unit passes with component tests in browser project."
 		},
 		{
