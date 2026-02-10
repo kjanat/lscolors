@@ -48,7 +48,7 @@
 			"id": "share-button",
 			"title": "Extract ShareButton component",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Create src/components/ShareButton.svelte wrapping CopyButton. Props: url (string). Wraps CopyButton with label='Share link' and share-btn class. Done when: copies permalink URL via CopyButton."
 		},
 		{

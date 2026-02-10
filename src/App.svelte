@@ -13,9 +13,9 @@ import {
 } from './convert.ts';
 import { parseLscolors, bsdCharToAnsiFg, bsdCharToAnsiBg } from './bsd.ts';
 import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
-import CopyButton from './components/CopyButton.svelte';
 import BsdInput from './components/BsdInput.svelte';
 import GnuInput from './components/GnuInput.svelte';
+import ShareButton from './components/ShareButton.svelte';
 import SwapControl from './components/SwapControl.svelte';
 import './style.css';
 
@@ -220,14 +220,7 @@ $effect(() => {
 	</div>
 
 	<!-- Share permalink -->
-	<div class="share-row">
-		<CopyButton
-			text={window.location.href}
-			label="Share link"
-			class="share-btn"
-			aria-label="Copy permalink to clipboard"
-		/>
-	</div>
+	<ShareButton url={window.location.href} />
 
 	<!-- Preview table: 11 BSD slots -->
 	{#if lscolorsValue.length === 22 && previewCssMap !== null && previewBsdMap !== null}

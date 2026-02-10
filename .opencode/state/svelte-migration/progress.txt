@@ -104,3 +104,12 @@ Started: 2026-02-10
 - Replaced 11-line inline swap markup in App.svelte with single `<SwapControl icon={swapIcon} label={directionLabel} onswap={handleSwap} />`
 - Files changed: src/components/SwapControl.svelte (new), src/App.svelte
 - **Learnings:** Purely presentational components (no internal state) are the simplest extraction — just props + template. `onswap` callback prop directly wired to `onclick` on internal button. dprint auto-formats new .svelte files on first `bun run format`.
+
+## Task - share-button
+- Created `src/components/ShareButton.svelte` — thin wrapper around CopyButton for share permalink
+- Props: `url` (string), `class` (CSS passthrough), `...rest` via `HTMLAttributes<HTMLDivElement>`
+- Renders: `<div class="share-row">` containing `<CopyButton text={url} label="Share link" class="share-btn">`
+- Replaced 8-line inline CopyButton+wrapper in App.svelte with single `<ShareButton url={window.location.href} />`
+- Removed CopyButton import from App.svelte (no longer directly used — ShareButton imports it internally)
+- Files changed: src/components/ShareButton.svelte (new), src/App.svelte
+- **Learnings:** Wrapper components that compose existing components are trivial — just move props + markup. The wrapper owns the `share-row` div + `share-btn` class, keeping App.svelte cleaner. CopyButton's `...rest` spread already handled `aria-label` forwarding.
