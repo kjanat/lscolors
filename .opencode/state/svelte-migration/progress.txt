@@ -78,3 +78,11 @@ Started: 2026-02-10
 - Updated `src/style.css`: changed `[data-copied="true"]` selectors to `.copied` for both `.copy-btn` and `.share-btn`
 - Files changed: src/components/CopyButton.svelte (new), src/App.svelte, src/style.css
 - **Learnings:** Svelte 5 `class:copied` directive adds/removes a CSS class reactively — cleaner than imperative `setAttribute`/`removeAttribute`. `HTMLButtonAttributes` from `svelte/elements` + `...rest` spread is the idiomatic way to forward native button props. `ReturnType<typeof setTimeout>` avoids needing `NodeJS.Timeout` or `number` type ambiguity.
+
+## Task - lscolors-input
+- Created `src/components/LscolorsInput.svelte` — extracts BSD LSCOLORS input field from App.svelte
+- Props: `value` ($bindable), `error` (string), `oninput` (() => void), `class` (CSS passthrough), `...rest` spread via `HTMLAttributes<HTMLDivElement>`
+- Renders: `.field.field--lscolors` wrapper, label with hint, input maxlength=22, CopyButton, error div with role=alert + aria-live
+- Updated App.svelte: imported LscolorsInput, replaced 25-line inline markup with `<LscolorsInput bind:value={lscolorsValue} error={lscolorsError} oninput={handleLscolorsInput} />`
+- Files changed: src/components/LscolorsInput.svelte (new), src/App.svelte
+- **Learnings:** For wrapper components (div root, not input root), use `HTMLAttributes<HTMLDivElement>` not `HTMLInputAttributes`. `bind:value` on the component prop + `bind:value` on internal `<input>` chains correctly. `{oninput}` shorthand passes parent callback directly to child input element. dprint/markup_fmt auto-reformats `$props()` destructuring to multiline when >3 props.

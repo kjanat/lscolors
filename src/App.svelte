@@ -14,6 +14,7 @@ import {
 import { parseLscolors, bsdCharToAnsiFg, bsdCharToAnsiBg } from './bsd.ts';
 import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
 import CopyButton from './components/CopyButton.svelte';
+import LscolorsInput from './components/LscolorsInput.svelte';
 import './style.css';
 
 const SLOT_SAMPLE_TEXT: Readonly<Record<BsdSlot, string>> = {
@@ -199,31 +200,11 @@ $effect(() => {
 
 	<div class="converter">
 		<!-- LSCOLORS input field -->
-		<div class="field field--lscolors">
-			<label for="lscolors-input">LSCOLORS <span class="label-hint"
-				>(BSD/macOS, 22 chars)</span></label>
-			<div class="input-row">
-				<input
-					id="lscolors-input"
-					type="text"
-					maxlength={22}
-					spellcheck="false"
-					autocomplete="off"
-					placeholder="exfxcxdxbxegedabagacad"
-					bind:value={lscolorsValue}
-					oninput={handleLscolorsInput}
-				>
-				<CopyButton text={lscolorsValue} aria-label="Copy LSCOLORS value" />
-			</div>
-			<div
-				class="error"
-				role="alert"
-				aria-live="polite"
-				hidden={lscolorsError === ''}
-			>
-				{lscolorsError}
-			</div>
-		</div>
+		<LscolorsInput
+			bind:value={lscolorsValue}
+			error={lscolorsError}
+			oninput={handleLscolorsInput}
+		/>
 
 		<!-- Swap direction -->
 		<div class="swap-container">

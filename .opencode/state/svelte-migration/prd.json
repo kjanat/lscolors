@@ -27,7 +27,7 @@
 			"id": "lscolors-input",
 			"title": "Extract LscolorsInput component",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Extract BSD LSCOLORS <input> from App.svelte into src/components/LscolorsInput.svelte. Props: value ($bindable), error (string), oninput (() => void). Renders: label, input maxlength=22 with letter-spacing, CopyButton, error div with role=alert. Done when: bind:value works, oninput triggers conversion, error displays."
 		},
 		{
