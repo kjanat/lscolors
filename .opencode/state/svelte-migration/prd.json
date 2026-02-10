@@ -69,7 +69,7 @@
 			"id": "styles-migration",
 			"title": "Migrate styles to scoped components",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Split src/style.css: keep globals (CSS reset, :root custom properties, #app layout, html/body, responsive @media queries). Move component-specific selectors into scoped <style> blocks in each .svelte file. Replace data-attribute selectors (.copy-btn[data-copied]) with class:copied toggles. Replace ID-based selectors (#lscolors-input, #swap-btn) with element/class selectors in scoped styles. Scoped styles inherit custom properties via var(--accent) etc. Done when: pixel-identical rendering at all breakpoints (480px, 375px)."
 		},
 		{

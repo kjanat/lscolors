@@ -45,6 +45,8 @@ Started: 2026-02-10
 - **Pre-existing issues**: Biome formatter disagrees with dprint on trailing commas in jsonc and CSS transition shorthand formatting. Test project filtering (`--project server`) doesn't work with vitest 4 inline project config.
 - **Component naming**: Avoid case-only filename collisions (e.g. `LscolorsInput` vs `LsColorsInput`). TS `forceConsistentCasingInFileNames` can't fully suppress this. Use semantically distinct names: `BsdInput.svelte` / `GnuInput.svelte`.
 - **Reactive URLs**: `window.location.href` is NOT reactive in Svelte templates. To pass a URL that updates with hash state, derive it via `$derived` from the same reactive values the hash `$effect` uses.
+- **Scoped styles + child components**: Svelte scoped styles can't pierce child components. Use `.parent :global(.child-class)` to style rendered child output. Avoid bare `:global()` — always scope it under a local parent selector.
+- **ID vs class in scoped styles**: Use class selectors (`.foo`) not ID selectors (`#foo`) in scoped `<style>` blocks. Keep `id` attributes only for `<label for=>` accessibility.
 
 ---
 <!-- Task logs below - APPEND ONLY -->
@@ -132,3 +134,21 @@ Started: 2026-02-10
 - ShareButton receives `permalinkUrl` instead of static `window.location.href` — updates when hash changes
 - Files changed: src/App.svelte
 - **Learnings:** `window.location.href` in a Svelte template expression is NOT reactive — it captures once at render time. To keep share URLs in sync with hash state, derive the full URL from the same reactive state the $effect uses. Extracting `$derived` intermediates (`hashFragment`, `permalinkUrl`) from `$effect` body deduplicates logic and makes values available to both the effect and the template.
+
+## Task - styles-migration
+- Split `src/style.css` (442→96 lines): kept only CSS reset, `:root` custom properties, `html`/`body` base, `#app` layout, shared `input`/`textarea` base styles, global responsive `@media` queries
+- Added scoped `<style>` blocks to all 7 `.svelte` files:
+  - **App.svelte**: header, h1, .arrow, .subtitle, .repo-link, .converter + responsive
+  - **CopyButton.svelte**: .copy-btn states (hover, focus-visible, copied) + responsive touch sizing
+  - **BsdInput.svelte**: .field, label, .label-hint, .input-row, .lscolors-input (letter-spacing), .error + responsive
+  - **GnuInput.svelte**: .field, label, .label-hint, .input-row, .error + responsive
+  - **SwapControl.svelte**: .swap-container, .swap-btn, .swap-icon, .direction + responsive touch sizing
+  - **ShareButton.svelte**: .share-row, `:global(.share-btn)` for child CopyButton padding/copied state
+  - **PreviewTable.svelte**: all .preview-* selectors, .th-label/.th-hex for responsive column hiding
+- Replaced `#swap-btn` ID selector with `.swap-btn` class selector (scoped)
+- Replaced `#lscolors-input` ID selector with `.lscolors-input` class selector (scoped) — kept `id` attr for `<label for=>`
+- Replaced `nth-child(2)`/`nth-child(6)` column-hiding selectors with explicit `.th-label`/`.th-hex` classes
+- Used `:global(.share-btn)` in ShareButton to style child CopyButton's rendered element
+- Shared field/label/input-row/error styles duplicated in BsdInput + GnuInput (small, avoids global coupling)
+- Files changed: src/style.css, src/App.svelte, src/components/{CopyButton,BsdInput,GnuInput,SwapControl,ShareButton,PreviewTable}.svelte
+- **Learnings:** Svelte scoped styles can't reach into child components — use `:global()` within a scoped parent selector (`.share-row :global(.share-btn)`) to style child output. Duplicating small shared styles across 2 components is acceptable vs. global coupling when there's no common ancestor component. ID selectors should become class selectors in scoped styles — IDs are only needed for `<label for=>` accessibility, not styling.

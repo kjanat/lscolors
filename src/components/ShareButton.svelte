@@ -18,3 +18,21 @@ let { url, class: className = '', ...rest }: Props = $props();
 		aria-label="Copy permalink to clipboard"
 	/>
 </div>
+
+<style>
+.share-row {
+	display: flex;
+	justify-content: center;
+	margin-top: 0.5rem;
+}
+
+/* Target the child CopyButton's rendered element via :global */
+.share-row :global(.share-btn) {
+	padding: 0.375rem 1.25rem;
+}
+
+.share-row :global(.share-btn.copied) {
+	color: #66bb6a;
+	border-color: #66bb6a;
+}
+</style>

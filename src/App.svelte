@@ -193,3 +193,65 @@ $effect(() => {
 	<!-- Preview table: 11 BSD slots -->
 	<PreviewTable cssMap={previewCssMap} bsdMap={previewBsdMap} />
 </main>
+
+<style>
+header {
+	margin-bottom: 2rem;
+	text-align: center;
+}
+
+h1 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+
+.arrow {
+	color: var(--accent);
+}
+
+.subtitle {
+	margin-top: 0.25rem;
+	font-size: 0.8rem;
+	color: var(--fg-muted);
+}
+
+.repo-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 0.5rem;
+	color: var(--fg-muted);
+	transition: color 0.15s;
+}
+
+.repo-link:hover {
+	color: var(--accent);
+}
+
+.converter {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+@media (max-width: 480px) {
+	h1 {
+		font-size: 1.2rem;
+	}
+
+	.subtitle {
+		font-size: 0.7rem;
+	}
+}
+
+@media (max-width: 375px) {
+	h1 {
+		font-size: 1.05rem;
+	}
+
+	.converter {
+		gap: 0.75rem;
+	}
+}
+</style>

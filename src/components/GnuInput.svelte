@@ -18,7 +18,7 @@ let {
 }: Props = $props();
 </script>
 
-<div class="field field--ls-colors {className}" {...rest}>
+<div class="field {className}" {...rest}>
 	<label for="ls-colors-input">LS_COLORS <span class="label-hint"
 		>(GNU/Linux, colon-delimited)</span></label>
 	<div class="input-row">
@@ -42,3 +42,45 @@ let {
 		{error}
 	</div>
 </div>
+
+<style>
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+}
+
+label {
+	font-size: 0.8rem;
+	font-weight: 500;
+	color: var(--fg-label);
+}
+
+.label-hint {
+	font-weight: 400;
+	color: var(--fg-muted);
+}
+
+.input-row {
+	display: flex;
+	gap: 0.5rem;
+	align-items: flex-start;
+}
+
+.input-row textarea {
+	flex: 1;
+	min-width: 0;
+}
+
+.error {
+	min-height: 1.125rem;
+	font-size: 0.75rem;
+	color: var(--error);
+}
+
+@media (max-width: 480px) {
+	.input-row {
+		flex-wrap: wrap;
+	}
+}
+</style>
