@@ -1,216 +1,25 @@
-// lscolors.ts
-// Two-way converter between BSD/macOS LSCOLORS and GNU LS_COLORS (dircolors format)
+/**
+ * Bidirectional conversion between BSD LSCOLORS and GNU LS_COLORS.
+ *
+ * Also provides 256-color → 16-color approximation and BSD char → CSS color mapping.
+ */
 
-export type BsdSlot = 'di' | 'ln' | 'so' | 'pi' | 'ex' | 'bd' | 'cd' | 'su' | 'sg' | 'tw' | 'ow';
-
-export const BSD_SLOTS: readonly BsdSlot[] = [
-	'di',
-	'ln',
-	'so',
-	'pi',
-	'ex',
-	'bd',
-	'cd',
-	'su',
-	'sg',
-	'tw',
-	'ow',
-] as const;
-
-/** Human-readable labels for each BSD slot */
-export const BSD_SLOT_LABELS: Readonly<Record<BsdSlot, string>> = {
-	di: 'Directory',
-	ln: 'Symbolic link',
-	so: 'Socket',
-	pi: 'Pipe (FIFO)',
-	ex: 'Executable',
-	bd: 'Block device',
-	cd: 'Character device',
-	su: 'Setuid (u+s)',
-	sg: 'Setgid (g+s)',
-	tw: 'Sticky + other-writable',
-	ow: 'Other-writable',
-};
-
-// BSD LSCOLORS char → ANSI SGR code mappings
-// a-h => basic colors (30-37 fg, 40-47 bg)
-// A-H => bright/high-intensity (90-97 fg, 100-107 bg)
-// x   => default (null)
-
-const BSD_FG_CHARS = 'abcdefgh' as const;
-const BSD_FG_BRIGHT_CHARS = 'ABCDEFGH' as const;
-
-function bsdCharToAnsiFg(ch: string): number | null {
-	const idx = BSD_FG_CHARS.indexOf(ch);
-	if (idx !== -1) return 30 + idx;
-	const brightIdx = BSD_FG_BRIGHT_CHARS.indexOf(ch);
-	if (brightIdx !== -1) return 90 + brightIdx;
-	return null; // 'x' or unknown
-}
-
-function bsdCharToAnsiBg(ch: string): number | null {
-	const idx = BSD_FG_CHARS.indexOf(ch);
-	if (idx !== -1) return 40 + idx;
-	const brightIdx = BSD_FG_BRIGHT_CHARS.indexOf(ch);
-	if (brightIdx !== -1) return 100 + brightIdx;
-	return null;
-}
-
-function ansiFgToBsdChar(code: number): string {
-	if (code >= 30 && code <= 37) return BSD_FG_CHARS[code - 30] ?? 'x';
-	if (code >= 90 && code <= 97) return BSD_FG_BRIGHT_CHARS[code - 90] ?? 'x';
-	return 'x';
-}
-
-function ansiBgToBsdChar(code: number): string {
-	if (code >= 40 && code <= 47) return BSD_FG_CHARS[code - 40] ?? 'x';
-	if (code >= 100 && code <= 107) return BSD_FG_BRIGHT_CHARS[code - 100] ?? 'x';
-	return 'x';
-}
+import {
+	ansiBgToBsdChar,
+	ansiFgToBsdChar,
+	BSD_FG_BRIGHT_CHARS,
+	BSD_FG_CHARS,
+	bsdCharToAnsiBg,
+	bsdCharToAnsiFg,
+	parseLscolors,
+	stringifyLscolors,
+} from './bsd.ts';
+import { parseLsColors, stringifyLsColors } from './gnu.ts';
+import { parseSgr } from './sgr.ts';
+import { BSD_SLOTS, type BsdSlot, type BsdSlotColors, type CssColor, type SlotCssColors, type Style } from './types.ts';
 
 // -------------------------
-// Style type
-// -------------------------
-
-export interface Style {
-	/** SGR attribute codes (e.g. [1, 34] for bold blue) */
-	codes: readonly number[];
-	/** 256-color foreground index, if present */
-	fg256?: number;
-	/** 256-color background index, if present */
-	bg256?: number;
-}
-
-// -------------------------
-// SGR parsing / formatting
-// -------------------------
-
-export function parseSgr(s: string): Style {
-	if (!s) return { codes: [] };
-
-	const nums = s
-		.split(';')
-		.map((x) => x.trim())
-		.filter(Boolean)
-		.map(Number)
-		.filter(Number.isFinite);
-
-	const codes: number[] = [];
-	let fg256: number | undefined;
-	let bg256: number | undefined;
-
-	for (let i = 0; i < nums.length; i++) {
-		const n = nums[i];
-		if (n === undefined) continue;
-
-		// 38;5;<idx> = 256-color foreground
-		if (n === 38 && nums[i + 1] === 5 && nums[i + 2] !== undefined && Number.isFinite(nums[i + 2])) {
-			fg256 = nums[i + 2];
-			i += 2;
-			continue;
-		}
-		// 48;5;<idx> = 256-color background
-		if (n === 48 && nums[i + 1] === 5 && nums[i + 2] !== undefined && Number.isFinite(nums[i + 2])) {
-			bg256 = nums[i + 2];
-			i += 2;
-			continue;
-		}
-
-		codes.push(n);
-	}
-
-	const result: Style = { codes };
-	if (fg256 !== undefined) result.fg256 = fg256;
-	if (bg256 !== undefined) result.bg256 = bg256;
-	return result;
-}
-
-export function stringifySgr(st: Style): string {
-	const out: number[] = [...st.codes];
-	if (st.fg256 !== undefined) out.push(38, 5, st.fg256);
-	if (st.bg256 !== undefined) out.push(48, 5, st.bg256);
-	return out.map(String).join(';');
-}
-
-// -------------------------
-// LS_COLORS parsing / formatting (GNU dircolors format)
-// -------------------------
-
-export function parseLsColors(lsColors: string): Map<string, Style> {
-	const map = new Map<string, Style>();
-	if (!lsColors) return map;
-
-	for (const part of lsColors.split(':')) {
-		if (!part) continue;
-		const eq = part.indexOf('=');
-		if (eq === -1) continue;
-		const key = part.slice(0, eq).trim();
-		const value = part.slice(eq + 1).trim();
-		if (!key) continue;
-		map.set(key, parseSgr(value));
-	}
-	return map;
-}
-
-export function stringifyLsColors(map: Map<string, Style>): string {
-	const parts: string[] = [];
-	for (const [k, st] of map.entries()) {
-		parts.push(`${k}=${stringifySgr(st)}`);
-	}
-	return parts.join(':');
-}
-
-// -------------------------
-// LSCOLORS parsing / formatting (BSD/macOS format)
-// -------------------------
-
-export interface BsdSlotColors {
-	readonly fg: string;
-	readonly bg: string;
-}
-
-const VALID_BSD_CHARS = new Set('abcdefghABCDEFGHx');
-
-export function isValidBsdChar(ch: string): boolean {
-	return VALID_BSD_CHARS.has(ch);
-}
-
-export function parseLscolors(lscolors: string): Map<BsdSlot, BsdSlotColors> {
-	if (lscolors.length !== 22) {
-		throw new Error(`LSCOLORS must be exactly 22 chars (got ${String(lscolors.length)})`);
-	}
-	const map = new Map<BsdSlot, BsdSlotColors>();
-	for (let i = 0; i < BSD_SLOTS.length; i++) {
-		const slot = BSD_SLOTS[i];
-		const fg = lscolors[2 * i];
-		const bg = lscolors[2 * i + 1];
-		if (slot === undefined || fg === undefined || bg === undefined) {
-			throw new Error(`Invalid LSCOLORS at position ${String(2 * i)}`);
-		}
-		if (!isValidBsdChar(fg) || !isValidBsdChar(bg)) {
-			throw new Error(
-				`Invalid BSD color char at position ${String(2 * i)}: '${fg}${bg}' (valid: a-h, A-H, x)`,
-			);
-		}
-		map.set(slot, { fg, bg });
-	}
-	return map;
-}
-
-export function stringifyLscolors(map: Map<BsdSlot, BsdSlotColors>): string {
-	let out = '';
-	for (const slot of BSD_SLOTS) {
-		const v = map.get(slot);
-		out += (v?.fg ?? 'x') + (v?.bg ?? 'x');
-	}
-	if (out.length !== 22) {
-		throw new Error(`Internal error: produced invalid LSCOLORS length (${String(out.length)})`);
-	}
-	return out;
-}
-
-// -------------------------
-// Conversion: LSCOLORS → LS_COLORS
+// LSCOLORS → LS_COLORS
 // -------------------------
 
 export interface LscolorsToLsColorsOptions {
@@ -257,7 +66,7 @@ export function lscolorsToLsColors(
 }
 
 // -------------------------
-// Conversion: LS_COLORS → LSCOLORS
+// LS_COLORS → LSCOLORS
 // -------------------------
 
 export interface LsColorsToLscolorsOptions {
@@ -342,19 +151,17 @@ function ansiStyleToBsdBgChar(st: Style): string {
 // 256-color → 16-color approximation
 // -------------------------
 
-/** Approximate xterm 256-color index to nearest basic ANSI 16-color foreground code */
 function approx256ToAnsi16Fg(idx: number): number {
 	const [r, g, b] = xterm256ToRgb(idx);
 	return rgbToNearestAnsi16Fg(r, g, b);
 }
 
-/** Approximate xterm 256-color index to nearest basic ANSI 16-color background code */
 function approx256ToAnsi16Bg(idx: number): number {
 	const [r, g, b] = xterm256ToRgb(idx);
 	return rgbToNearestAnsi16Bg(r, g, b);
 }
 
-// Standard xterm system color RGB values
+/** Standard xterm system color RGB values (indices 0-15) */
 const SYSTEM_COLORS: readonly (readonly [number, number, number])[] = [
 	[0, 0, 0],
 	[205, 0, 0],
@@ -374,6 +181,7 @@ const SYSTEM_COLORS: readonly (readonly [number, number, number])[] = [
 	[255, 255, 255],
 ] as const;
 
+/** Convert xterm 256-color index to RGB triplet */
 export function xterm256ToRgb(idx: number): readonly [number, number, number] {
 	// 0-15: system colors
 	if (idx >= 0 && idx <= 15) {
@@ -443,9 +251,6 @@ function rgbToNearestAnsi16Bg(r: number, g: number, b: number): number {
 // BSD char → CSS color (for preview rendering)
 // -------------------------
 
-/** CSS hex representation of a color, or null for default/terminal-dependent */
-export type CssColor = string | null;
-
 /** Map a BSD LSCOLORS character to a CSS hex color string, or null for default */
 export function bsdCharToCssColor(ch: string): CssColor {
 	const idx = BSD_FG_CHARS.indexOf(ch);
@@ -470,12 +275,6 @@ export function xterm256ToCssHex(idx: number): string {
 
 function rgbToHex(r: number, g: number, b: number): string {
 	return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-}
-
-/** Resolved fg/bg CSS colors for a single BSD slot */
-export interface SlotCssColors {
-	readonly fg: CssColor;
-	readonly bg: CssColor;
 }
 
 /** Parse an LSCOLORS string and return CSS colors for each BSD slot */
