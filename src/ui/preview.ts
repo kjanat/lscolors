@@ -73,9 +73,22 @@ export function renderPreview(container: HTMLDivElement, lscolorsValue: string):
 
 	const thead = document.createElement('thead');
 	const headerRow = document.createElement('tr');
-	for (const text of ['Slot', 'Label', 'Preview', 'BSD', 'SGR', 'Hex']) {
+	const headers: Array<{ text: string; title?: string }> = [
+		{ text: 'Slot' },
+		{ text: 'Label' },
+		{ text: 'Preview' },
+		{ text: 'BSD' },
+		{
+			text: 'SGR',
+			title:
+				'Select Graphic Rendition — ANSI escape codes for text formatting, colors, and styles in terminal emulators',
+		},
+		{ text: 'Hex' },
+	];
+	for (const { text, title } of headers) {
 		const th = document.createElement('th');
 		th.textContent = text;
+		if (title !== undefined) th.title = title;
 		headerRow.appendChild(th);
 	}
 	thead.appendChild(headerRow);
