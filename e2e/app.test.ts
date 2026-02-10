@@ -124,6 +124,12 @@ test.describe('share button', () => {
 		await page.locator('#lscolors-input').fill(VALID_LSCOLORS);
 		await shareBtn.click();
 		await expect(shareBtn).toContainText('Copied!');
+
+		// Verify actual clipboard contents include the LSCOLORS value
+		const clipboardText = await page.evaluate(() =>
+			navigator.clipboard.readText(),
+		);
+		expect(clipboardText).toContain(VALID_LSCOLORS);
 	});
 });
 
@@ -180,9 +186,9 @@ test.describe('preview table', () => {
 		await expect(first).toHaveAttribute('style', /color/);
 	});
 
-	test('hidden when no valid LSCOLORS', async ({ page }) => {
+	test('not in DOM when no valid LSCOLORS', async ({ page }) => {
 		await page.goto('/');
-		const table = page.locator('table');
+		const table = page.locator('.preview-table');
 		await expect(table).toHaveCount(0);
 	});
 

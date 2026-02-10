@@ -1,4 +1,5 @@
 <script lang="ts">
+import { onMount } from 'svelte';
 import {
 	type BsdSlot,
 	type BsdSlotColors,
@@ -27,28 +28,32 @@ let lscolorsError: string = $state('');
 let lsColorsError: string = $state('');
 
 // --- Initialization from URL hash ---
+// Must remain client-only: decodeHash reads window.location.hash which
+// doesn't exist during SSR. onMount guarantees a browser environment.
 
-const initialHash = decodeHash(window.location.hash);
-if (initialHash !== null) {
-	direction = initialHash.source;
-	if (initialHash.source === 'lscolors-to-ls_colors') {
-		lscolorsValue = initialHash.value;
-		try {
-			lsColorsValue = lscolorsToLsColors(initialHash.value);
-			lscolorsError = '';
-		} catch (e: unknown) {
-			lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
-		}
-	} else {
-		lsColorsValue = initialHash.value;
-		try {
-			lscolorsValue = lsColorsToLscolors(initialHash.value);
-			lsColorsError = '';
-		} catch (e: unknown) {
-			lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
+onMount(() => {
+	const initialHash = decodeHash(window.location.hash);
+	if (initialHash !== null) {
+		direction = initialHash.source;
+		if (initialHash.source === 'lscolors-to-ls_colors') {
+			lscolorsValue = initialHash.value;
+			try {
+				lsColorsValue = lscolorsToLsColors(initialHash.value);
+				lscolorsError = '';
+			} catch (e: unknown) {
+				lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
+			}
+		} else {
+			lsColorsValue = initialHash.value;
+			try {
+				lscolorsValue = lsColorsToLscolors(initialHash.value);
+				lsColorsError = '';
+			} catch (e: unknown) {
+				lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
+			}
 		}
 	}
-}
+});
 
 // --- Derived values ---
 
@@ -147,8 +152,17 @@ let permalinkUrl: string = $derived(
 				hashFragment,
 );
 
+let hashTimeout: ReturnType<typeof setTimeout> | undefined;
+let lastAppliedUrl: string | undefined;
+
 $effect(() => {
-	history.replaceState(null, '', permalinkUrl);
+	const url = permalinkUrl;
+	if (url === lastAppliedUrl) return;
+	clearTimeout(hashTimeout);
+	hashTimeout = setTimeout(() => {
+		lastAppliedUrl = url;
+		history.replaceState(null, '', url);
+	}, 120);
 });
 </script>
 

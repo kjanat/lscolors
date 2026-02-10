@@ -1,3 +1,4 @@
+import { tick } from 'svelte';
 import { describe, expect, it } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import App from './App.svelte';
@@ -79,7 +80,7 @@ describe('App.svelte', () => {
 		expect(direction?.textContent).toContain('LS_COLORS');
 
 		swap?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-		await new Promise((r) => setTimeout(r, 50));
+		await tick();
 
 		expect(direction?.textContent).toContain('LS_COLORS');
 		expect(direction?.textContent).toContain('LSCOLORS');

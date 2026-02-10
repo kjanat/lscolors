@@ -49,7 +49,9 @@ onDestroy(() => {
 	onclick={handleClick}
 	{...rest}
 >
-	{copied ? 'Copied!' : label}
+	<span class="copy-btn-label" aria-live="polite" aria-atomic="true">{
+		copied ? 'Copied!' : label
+	}</span>
 </button>
 
 <style>
