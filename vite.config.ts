@@ -6,7 +6,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	base:
 		process.env.GITHUB_ACTIONS === 'true'
-			? `/${process.env.GITHUB_REPOSITORY!.split('/')[1]}/`
+			? /* biome-ignore lint/style/noNonNullAssertion: We know that
+				 * GITHUB_REPOSITORY will be set in GitHub Actions, and we want
+				 * to ensure that the base path is correct for GitHub Pages. */
+				`/${process.env.GITHUB_REPOSITORY!.split('/')[1]}/`
 			: '/',
 	build: { outDir: 'dist' },
 	server: { allowedHosts: ['propc-manjaro'] },
