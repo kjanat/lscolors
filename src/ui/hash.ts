@@ -9,10 +9,26 @@ export type HashState = {
 	readonly value: string;
 };
 
+/**
+ * RFC 3986 §3.5 fragment-safe character test.
+ * Fragment allows: unreserved / sub-delims / ":" / "@" / "/" / "?"
+ * This avoids over-encoding `:;=` which bloats LS_COLORS values ~60%.
+ */
+const FRAGMENT_SAFE = /^[A-Za-z0-9\-._~!$&'()*+,;:=@/?]$/;
+
+/** Encode a value for use in a URL fragment, only escaping truly unsafe chars */
+function encodeFragmentValue(value: string): string {
+	let result = '';
+	for (const char of value) {
+		result += FRAGMENT_SAFE.test(char) ? char : encodeURIComponent(char);
+	}
+	return result;
+}
+
 export function encodeHash(state: HashState): string {
 	if (state.value === '') return '';
 	const key = state.source === 'lscolors-to-ls_colors' ? 'lscolors' : 'ls_colors';
-	return `#${key}=${encodeURIComponent(state.value)}`;
+	return `#${key}=${encodeFragmentValue(state.value)}`;
 }
 
 export function decodeHash(hash: string): HashState | null {
