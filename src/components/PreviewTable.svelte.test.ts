@@ -9,8 +9,18 @@ const cssMap = lscolorsToCssMap(VALID_LSCOLORS);
 const bsdMap = parseLscolors(VALID_LSCOLORS);
 
 describe('PreviewTable', () => {
-	it('renders nothing when cssMap is null', async () => {
+	it('renders nothing when both maps are null', async () => {
 		const { container } = render(PreviewTable, { cssMap: null, bsdMap: null });
+		expect(container.querySelectorAll('table')).toHaveLength(0);
+	});
+
+	it('renders nothing when only cssMap is null', async () => {
+		const { container } = render(PreviewTable, { cssMap: null, bsdMap });
+		expect(container.querySelectorAll('table')).toHaveLength(0);
+	});
+
+	it('renders nothing when only bsdMap is null', async () => {
+		const { container } = render(PreviewTable, { cssMap, bsdMap: null });
 		expect(container.querySelectorAll('table')).toHaveLength(0);
 	});
 

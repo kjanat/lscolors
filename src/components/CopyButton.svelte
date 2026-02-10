@@ -1,4 +1,5 @@
 <script lang="ts">
+import { onDestroy } from 'svelte';
 import type { HTMLButtonAttributes } from 'svelte/elements';
 
 interface Props extends HTMLButtonAttributes {
@@ -12,17 +13,29 @@ let { text, label = 'Copy', class: className = '', ...rest }: Props = $props();
 let copied = $state(false);
 let timeoutId: ReturnType<typeof setTimeout> | undefined = $state(undefined);
 
-function handleClick(): void {
+async function handleClick(): Promise<void> {
 	if (timeoutId !== undefined) {
 		clearTimeout(timeoutId);
-	}
-	navigator.clipboard.writeText(text);
-	copied = true;
-	timeoutId = setTimeout(() => {
-		copied = false;
 		timeoutId = undefined;
-	}, 1200);
+	}
+	try {
+		await navigator.clipboard.writeText(text);
+		copied = true;
+		timeoutId = setTimeout(() => {
+			copied = false;
+			timeoutId = undefined;
+		}, 1200);
+	} catch {
+		copied = false;
+	}
 }
+
+onDestroy(() => {
+	if (timeoutId !== undefined) {
+		clearTimeout(timeoutId);
+		timeoutId = undefined;
+	}
+});
 </script>
 
 <button

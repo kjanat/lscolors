@@ -1,8 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import CopyButton from './CopyButton.svelte';
 
 describe('CopyButton', () => {
+	afterEach(() => {
+		vi.unstubAllGlobals();
+		vi.useRealTimers();
+		vi.clearAllMocks();
+	});
+
 	it('renders with default label', async () => {
 		const screen = render(CopyButton, { text: 'hello' });
 		await expect
@@ -28,8 +34,6 @@ describe('CopyButton', () => {
 
 		expect(writeText).toHaveBeenCalledWith('copied-value');
 		await expect.element(button).toHaveTextContent('Copied!');
-
-		vi.unstubAllGlobals();
 	});
 
 	it('resets label after timeout', async () => {
@@ -45,8 +49,5 @@ describe('CopyButton', () => {
 
 		await vi.advanceTimersByTimeAsync(1200);
 		await expect.element(button).toHaveTextContent('Copy');
-
-		vi.useRealTimers();
-		vi.unstubAllGlobals();
 	});
 });

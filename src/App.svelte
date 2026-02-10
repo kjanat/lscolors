@@ -89,6 +89,7 @@ function handleLscolorsInput(): void {
 	try {
 		lsColorsValue = lscolorsToLsColors(lscolorsValue);
 	} catch (e: unknown) {
+		lsColorsValue = '';
 		lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
 	}
 }
@@ -100,6 +101,7 @@ function handleLsColorsInput(): void {
 	try {
 		lscolorsValue = lsColorsToLscolors(lsColorsValue);
 	} catch (e: unknown) {
+		lscolorsValue = '';
 		lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
 	}
 }
@@ -114,6 +116,7 @@ function handleSwap(): void {
 		try {
 			lscolorsValue = lsColorsToLscolors(lsColorsValue);
 		} catch (e: unknown) {
+			lscolorsValue = '';
 			lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
 		}
 	} else {
@@ -121,6 +124,7 @@ function handleSwap(): void {
 		try {
 			lsColorsValue = lscolorsToLsColors(lscolorsValue);
 		} catch (e: unknown) {
+			lsColorsValue = '';
 			lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
 		}
 	}
