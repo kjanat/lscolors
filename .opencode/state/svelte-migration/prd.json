@@ -1,0 +1,118 @@
+{
+	"prdName": "svelte-migration",
+	"description": "Replace UI layer (main.ts, src/ui/*, index.html) with Svelte 5 components using runes API. Keep pure logic layer untouched. Big bang rewrite, plain Svelte + Vite (no SvelteKit).",
+	"tasks": [
+		{
+			"id": "toolchain-setup",
+			"title": "Svelte toolchain setup",
+			"category": "architecture",
+			"passes": true,
+			"details": "Install svelte, @sveltejs/vite-plugin-svelte, svelte-check. Add svelte() plugin to vite.config.ts (alongside existing devtoolsJson). Create svelte.config.js with vitePreprocess(). Update tsconfig.json for Svelte types. Add 'check' script to package.json. Configure dprint for .svelte (investigate markup_fmt). Add .svelte to biome.json ignores (Biome can't lint Svelte). Done when: bun run build still works with Svelte plugin loaded, bun run check runs svelte-check."
+		},
+		{
+			"id": "app-root",
+			"title": "App.svelte root component + state",
+			"category": "architecture",
+			"passes": true,
+			"details": "Create src/App.svelte with all state ($state: direction, lscolorsValue, lsColorsValue, lscolorsError, lsColorsError), conversion handlers (handleLscolorsInput, handleLsColorsInput), derived values ($derived: directionLabel, swapIcon, previewData), direction swap handler. Rewrite src/main.ts to mount(App, { target }) with runtime null check (no ! assertion). Strip index.html to <div id='app'></div> + script. Inline full current HTML structure monolithically in App.svelte (extract components later). Done when: app renders, both conversion directions work in dev server."
+		},
+		{
+			"id": "copy-button",
+			"title": "Extract CopyButton component",
+			"category": "feature",
+			"passes": true,
+			"details": "Create reusable src/components/CopyButton.svelte. Replaces src/ui/clipboard.ts logic. Props: text (string), label? (default 'Copy'), class? (CSS passthrough). Internal state: copied boolean, 1200ms timeout to reset. Use class:copied toggle instead of data-copied attribute. Done when: copies text to clipboard, shows 'Copied!' feedback, resets after timeout."
+		},
+		{
+			"id": "lscolors-input",
+			"title": "Extract LscolorsInput component",
+			"category": "feature",
+			"passes": true,
+			"details": "Extract BSD LSCOLORS <input> from App.svelte into src/components/LscolorsInput.svelte. Props: value ($bindable), error (string), oninput (() => void). Renders: label, input maxlength=22 with letter-spacing, CopyButton, error div with role=alert. Done when: bind:value works, oninput triggers conversion, error displays."
+		},
+		{
+			"id": "ls-colors-input",
+			"title": "Extract LsColorsInput component",
+			"category": "feature",
+			"passes": true,
+			"details": "Extract GNU LS_COLORS <textarea> from App.svelte into src/components/LsColorsInput.svelte. Props: value ($bindable), error (string), oninput (() => void). Renders: label, textarea rows=4, CopyButton, error div with role=alert. Done when: bind:value works, oninput triggers conversion, error displays."
+		},
+		{
+			"id": "swap-control",
+			"title": "Extract SwapControl component",
+			"category": "feature",
+			"passes": true,
+			"details": "Extract direction swap button + direction label into src/components/SwapControl.svelte. Props: icon (string: arrow), label (string: direction text), onswap (() => void). Done when: swap toggles direction, icon and label update reactively."
+		},
+		{
+			"id": "share-button",
+			"title": "Extract ShareButton component",
+			"category": "feature",
+			"passes": true,
+			"details": "Create src/components/ShareButton.svelte wrapping CopyButton. Props: url (string). Wraps CopyButton with label='Share link' and share-btn class. Done when: copies permalink URL via CopyButton."
+		},
+		{
+			"id": "preview-table",
+			"title": "Extract PreviewTable component",
+			"category": "feature",
+			"passes": true,
+			"details": "Port 162-line imperative preview.ts to src/components/PreviewTable.svelte. Props: cssMap (Map<BsdSlot, SlotCssColors> | null), lscolorsValue (string). Keep SLOT_SAMPLE_TEXT, bsdCharsToSgr(), formatHex() helpers in a separate .ts file (pure logic separation). Template: {#each BSD_SLOTS as slot} with slot code, label, sample swatch, BSD chars, SGR codes, hex colors. Done when: all 11 slots render with correct colors, codes, labels."
+		},
+		{
+			"id": "hash-permalink",
+			"title": "Wire hash/permalink integration",
+			"category": "integration",
+			"passes": true,
+			"details": "Wire src/ui/hash.ts (unchanged pure logic) via $effect in App.svelte. Import decodeHash/encodeHash. Initialize state from URL hash BEFORE declaring the $effect (avoid stale-mount issue). $effect syncs state changes to URL fragment via history.replaceState. Done when: permalink round-trip works — copy URL, open in new tab, fields populate and convert correctly."
+		},
+		{
+			"id": "styles-migration",
+			"title": "Migrate styles to scoped components",
+			"category": "feature",
+			"passes": true,
+			"details": "Split src/style.css: keep globals (CSS reset, :root custom properties, #app layout, html/body, responsive @media queries). Move component-specific selectors into scoped <style> blocks in each .svelte file. Replace data-attribute selectors (.copy-btn[data-copied]) with class:copied toggles. Replace ID-based selectors (#lscolors-input, #swap-btn) with element/class selectors in scoped styles. Scoped styles inherit custom properties via var(--accent) etc. Done when: pixel-identical rendering at all breakpoints (480px, 375px)."
+		},
+		{
+			"id": "delete-old-ui",
+			"title": "Delete old UI code",
+			"category": "cleanup",
+			"passes": true,
+			"details": "Delete src/ui/dom.ts (getElementById wrappers, replaced by Svelte bindings), src/ui/clipboard.ts (absorbed into CopyButton.svelte), src/ui/preview.ts (replaced by PreviewTable.svelte). Verify no remaining imports reference them. Delete src/index.ts barrel (dead code, private package). Clean up any unused type exports in types.ts. Done when: no dangling imports, bun run build succeeds."
+		},
+		{
+			"id": "format-all",
+			"title": "Format entire codebase",
+			"category": "polish",
+			"passes": true,
+			"details": "Run bun run format (dprint fmt .) across entire codebase. Ensure all .svelte files follow project conventions (tabs, single quotes, LF). If dprint can't handle .svelte, document the gap and manually ensure consistent formatting. Run bun run lint (biome check) and fix any issues. Done when: bun run format produces no changes, bun run lint passes clean."
+		},
+		{
+			"id": "component-tests",
+			"title": "Svelte component browser tests",
+			"category": "architecture",
+			"passes": true,
+			"details": "Write vitest-browser-svelte tests in src/*.svelte.test.ts (matched by vitest client project: src/**/*.svelte.{test,spec}.{js,ts}). Uses render() from vitest-browser-svelte + page from vitest/browser. Tests: App.svelte renders h1 (expand existing stub), CopyButton copies text and shows feedback, LscolorsInput accepts input and triggers oninput, LsColorsInput textarea works, SwapControl toggles, PreviewTable renders 11 slots. BDD style (describe/it). Done when: bun run test:unit passes with component tests in browser project."
+		},
+		{
+			"id": "e2e-tests",
+			"title": "Playwright e2e tests",
+			"category": "integration",
+			"passes": true,
+			"details": "Write Playwright e2e tests in e2e/ (matched by playwright.config.ts testDir). Expand existing demo stub. Tests: page loads with h1, LSCOLORS input converts to LS_COLORS, LS_COLORS textarea converts to LSCOLORS, swap button toggles direction, copy buttons work, share button copies URL, permalink round-trip (navigate to hash URL, verify fields populated), preview table shows 11 rows with colored swatches, responsive layout at 375px viewport. Done when: bun run test:e2e passes."
+		},
+		{
+			"id": "update-agents-md",
+			"title": "Update AGENTS.md for Svelte codebase",
+			"category": "polish",
+			"passes": true,
+			"details": "Rewrite root AGENTS.md to reflect post-migration codebase. Update STRUCTURE tree: remove src/ui/dom.ts, clipboard.ts, preview.ts; add src/App.svelte, src/components/*.svelte, svelte.config.js. Update WHERE TO LOOK table: component locations, App.svelte for state/handlers. Update CONVENTIONS: add Svelte section (runes, $state/$derived/$effect, bind:value, scoped styles, no SvelteKit). Update COMMANDS: add bun run check, update test commands. Update NOTES: remove re-entrant guard note, add Svelte mount pattern. Remove DOM Access section (no more dom.ts). Update ANTI-PATTERNS if needed. Done when: AGENTS.md accurately describes the Svelte-based codebase."
+		},
+		{
+			"id": "verify-all",
+			"title": "Final verification pass",
+			"category": "polish",
+			"passes": true,
+			"details": "Full verification: bun run test (unit + component + e2e all pass), bun run lint (Biome clean), bun run check (svelte-check zero errors), bun run build (production build succeeds), bun run format (no changes). Manual checks: both conversion directions work, swap toggles, copy/share buttons, hash restore, preview table 11 slots, responsive at 480px/375px, a11y attrs (role=alert, aria-live, aria-label, aria-hidden). Done when: all automated checks pass, AGENTS.md is current."
+		}
+	]
+}

@@ -88,12 +88,13 @@ export function parseSgr(s: string): Style {
 		codes.push(n);
 	}
 
-	const result: Style = { codes };
-	if (fg256 !== undefined) result.fg256 = fg256;
-	if (bg256 !== undefined) result.bg256 = bg256;
-	if (fgRgb !== undefined) result.fgRgb = fgRgb;
-	if (bgRgb !== undefined) result.bgRgb = bgRgb;
-	return result;
+	return {
+		codes,
+		...(fg256 !== undefined ? { fg256 } : {}),
+		...(bg256 !== undefined ? { bg256 } : {}),
+		...(fgRgb !== undefined ? { fgRgb } : {}),
+		...(bgRgb !== undefined ? { bgRgb } : {}),
+	};
 }
 
 /** Serialize a {@link Style} back to an SGR string */

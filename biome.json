@@ -7,11 +7,17 @@
 		"defaultBranch": "master"
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache"],
+		"includes": [
+			"**",
+			"!!**/dist",
+			"!!**/.jj",
+			"!!**/coverage",
+			"!!**/*.*_cache"
+		],
 		"ignoreUnknown": true
 	},
 	"formatter": {
-		"enabled": true,
+		"enabled": false,
 		"indentStyle": "tab"
 	},
 	"linter": {
@@ -25,13 +31,38 @@
 	},
 	"javascript": { "formatter": { "quoteStyle": "single" } },
 	"html": { "experimentalFullSupportEnabled": true },
-	"css": { "parser": { "tailwindDirectives": true } },
+	"css": { "parser": { "tailwindDirectives": true, "cssModules": true } },
 	"assist": {
 		"enabled": true,
 		"actions": {
 			"source": {
-				"organizeImports": "on"
+				"recommended": true,
+				"organizeImports": "on",
+				"useSortedAttributes": "on",
+				"useSortedProperties": "on"
 			}
 		}
-	}
+	},
+	"overrides": [{
+		"includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
+		"linter": {
+			"rules": {
+				"style": {
+					"useConst": "off",
+					"useImportType": "off"
+				},
+				"correctness": {
+					"noUnusedVariables": "off",
+					"noUnusedImports": "off"
+				}
+			}
+		},
+		"assist": {
+			"actions": {
+				"source": {
+					"organizeImports": "off"
+				}
+			}
+		}
+	}]
 }

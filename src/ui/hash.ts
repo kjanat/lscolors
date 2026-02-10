@@ -39,7 +39,12 @@ export function decodeHash(hash: string): HashState | null {
 	if (eqIdx === -1) return null;
 
 	const key: string = raw.slice(0, eqIdx);
-	const value: string = decodeURIComponent(raw.slice(eqIdx + 1));
+	let value: string;
+	try {
+		value = decodeURIComponent(raw.slice(eqIdx + 1));
+	} catch {
+		return null;
+	}
 	if (value === '') return null;
 
 	if (key === 'lscolors') {

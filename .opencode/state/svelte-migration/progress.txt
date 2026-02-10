@@ -1,0 +1,219 @@
+# Progress Log
+PRD: svelte-migration
+Started: 2026-02-10
+
+## Codebase Patterns
+- **PM**: bun (not npm). Use `bun run build`, `bun test`, `bun install`
+- **Strict TS**: noUncheckedIndexedAccess, exactOptionalPropertyTypes, no any, no `as`, no `!`
+- **Vite base**: `/lscolors/` for GitHub Pages
+- **VCS**: jj (colocated with git), default branch `master`
+- **Formatter**: dprint (run `bun run format`)
+- **Linter**: Biome (run `bun run lint`), formatter `"enabled": false` in biome.json (dprint is authoritative)
+- **Testing**: Vitest, co-located *.test.ts, BDD style (describe/it), explicit imports
+- **Pure logic layer**: bsd.ts, gnu.ts, sgr.ts, convert.ts, types.ts — NEVER modify
+- **Svelte**: Svelte 5 runes ($state, $derived, $effect), no SvelteKit
+- **Svelte MCP tools**: Use `svelte-file-editor` agent for .svelte files. Available tools:
+  `list-sections` → discover docs, `get-documentation` → fetch docs, `svelte-autofixer` → validate code (MUST use before committing .svelte files). Call list-sections first, then get-documentation for relevant sections.
+- **Overseer**: After completing each PRD task, also complete the matching Overseer task.
+  Milestone: `task_01KH2KFK9HCYEMCKGB3JW2ESGE`
+  Use `tasks.search("<task title>")` to find the Overseer task, then:
+  `await tasks.complete("<overseer-task-id>", { result: "<what was done>" })`
+  PRD task ID → Overseer task mapping:
+  - toolchain-setup    → task_01KH2KHFNJBZM7S5J5P2427VQV
+  - app-root           → task_01KH2KHFPN3AM2VGW20W92N0DW
+  - copy-button        → task_01KH2KHFTBV2CJENNA6N2DTJ5W
+  - lscolors-input     → task_01KH2KHFQK87YSQYS96X8TFXDG
+  - ls-colors-input    → task_01KH2KHFRG2489XPKFSYATGT81
+  - swap-control       → task_01KH2KHFSE3H59VZTHRTD4ASQF
+  - share-button       → task_01KH2KHFV9R8STA5F15B3K5H87
+  - preview-table      → task_01KH2KHFW6N3CZE6B757BPZ68A
+  - hash-permalink     → task_01KH2KHFX40SGZHZM8SS92ZN3E
+  - styles-migration   → task_01KH2KHFXXB28YH43K4HF5K8PX
+  - delete-old-ui      → task_01KH2KHFYTCVTY6SEG9NFQ13BV
+  - format-all         → task_01KH2M3KDTZ5D1E7309XENJ0Q0
+  - component-tests    → task_01KH2M3KEQDC0FXN48Y425A167
+  - e2e-tests          → task_01KH2M3KFMFJ5WJXKYK7QMF39A
+  - update-agents-md   → task_01KH2M3KGHC3C200J6Y0NRHD10
+  - verify-all         → task_01KH2KHFZJ2TD769NCNNPGTGE9
+
+- **Svelte component props**: Use `interface Props extends HTMLXxxAttributes` from `svelte/elements` + `...rest` spread for native attr forwarding. `class` prop via `let { class: className = '' } = $props()` and `class="base {className}"`. `class:foo` directive for boolean CSS toggles.
+- **Svelte shims**: `src/svelte-shims.d.ts` declares `*.svelte` module type for TS. Uses `Component` from svelte (Svelte 5 style). The `/// <reference types="svelte" />` approach doesn't work with svelte-check — explicit `declare module` is needed.
+- **Biome + Svelte**: `.svelte` files ignored in biome.json (Biome parses them via HTML support but gives false positives on Svelte patterns like reactive `let`). Biome formatter also disabled (dprint handles it via markup_fmt).
+- **dprint + Svelte**: markup_fmt plugin already formats `.svelte` files out of the box. No extra config needed.
+- **svelte-check**: runs via `bun run check`. Uses `--tsconfig ./tsconfig.json`.
+- **Mount pattern**: `mount(App, { target })` where target is `<div id="app">`. Component renders `<main>` (no id) inside it. CSS `#app` styles apply to the wrapper div.
+- **Vitest config**: All vitest config (including `projects` for server + client/browser) lives in `vite.config.ts`. No separate `vitest.config.ts` — it would shadow `vite.config.ts`'s projects.
+- **Component naming**: Avoid case-only filename collisions (e.g. `LscolorsInput` vs `LsColorsInput`). TS `forceConsistentCasingInFileNames` can't fully suppress this. Use semantically distinct names: `BsdInput.svelte` / `GnuInput.svelte`.
+- **Reactive URLs**: `window.location.href` is NOT reactive in Svelte templates. To pass a URL that updates with hash state, derive it via `$derived` from the same reactive values the hash `$effect` uses.
+- **Scoped styles + child components**: Svelte scoped styles can't pierce child components. Use `.parent :global(.child-class)` to style rendered child output. Avoid bare `:global()` — always scope it under a local parent selector.
+- **ID vs class in scoped styles**: Use class selectors (`.foo`) not ID selectors (`#foo`) in scoped `<style>` blocks. Keep `id` attributes only for `<label for=>` accessibility.
+- **Browser tests**: Use `vitest-browser-svelte`'s `render()` + `screen.getByRole('textbox', { name: /.../ })` for form inputs (avoids `getByLabelText` matching `aria-label` on sibling buttons). For CSS selectors, use `const { container } = render(...)` then `container.querySelectorAll(...)`. For clipboard mocking: `vi.stubGlobal('navigator', { clipboard: { writeText } })` (not `Object.assign`). Hidden elements aren't in the a11y tree — use DOM queries instead of role queries.
+
+---
+<!-- Task logs below - APPEND ONLY -->
+
+## Task - toolchain-setup
+- Added `svelte.config.js` with vitePreprocess()
+- Added `"check"` script to package.json (`svelte-check --tsconfig ./tsconfig.json`)
+- Created `src/svelte-shims.d.ts` with `declare module '*.svelte'` for TS
+- Added `!!**/*.svelte` to biome.json file ignores
+- Created minimal `src/App.svelte` placeholder (`<h1>LSCOLORS</h1>`)
+- Files changed: biome.json, package.json, tsconfig.json (no change needed), src/App.svelte, src/svelte-shims.d.ts, svelte.config.js
+- **Learnings:** svelte-check needs explicit `declare module '*.svelte'` in a .d.ts included by tsconfig; `/// <reference types="svelte" />` alone doesn't work. markup_fmt handles .svelte formatting. Most toolchain was already wired in prep commit.
+
+## Task - app-root
+- Rewrote `src/App.svelte` from placeholder to full monolithic component with all state, handlers, derived values, preview table, and clipboard logic
+- Rewrote `src/main.ts` to `mount(App, { target })` with `instanceof HTMLElement` null check
+- Stripped `index.html` to `<div id="app">` + script tag (Svelte renders `<main>` inside)
+- State: 5 `$state` runes (direction, lscolorsValue, lsColorsValue, lscolorsError, lsColorsError)
+- Derived: directionLabel, swapIcon, previewCssMap, previewBsdMap via `$derived`/`$derived.by`
+- URL hash init runs synchronously before `$effect` to avoid stale-mount
+- `$effect` syncs state → URL hash via `history.replaceState`
+- Preview table uses `{#each BSD_SLOTS as slot (slot)}` with `{@const}` bindings + `style:` directives
+- Clipboard: inline `copyToClipboard(event, text)` with `instanceof HTMLButtonElement` guard
+- Files changed: src/App.svelte, src/main.ts, index.html
+- **Learnings:** Svelte `mount()` renders component DOM *inside* the target element, so `<main id="app">` in the component would create duplicate IDs with `<div id="app">` mount target. Removed the id from `<main>`. CSS `#app` styles apply to the wrapper div. `bind:value` + `oninput` handler works without re-entrant guard — Svelte handles it. `maxlength` and `rows` should be expressions (`maxlength={22}`, `rows={4}`) not string attributes.
+
+## Task - copy-button
+- Created `src/components/CopyButton.svelte` — reusable clipboard button with $state runes
+- Props: `text` (string), `label` (default 'Copy'), `class` (CSS passthrough), plus `...rest` spread via `HTMLButtonAttributes`
+- Internal: `copied` $state boolean, 1200ms timeout with cleanup on re-click
+- Uses `class:copied` toggle instead of `data-copied` attribute
+- Updated `src/App.svelte`: imported CopyButton, replaced 3 inline `<button>` + `copyToClipboard()` calls, deleted `copyToClipboard` function
+- Updated `src/style.css`: changed `[data-copied="true"]` selectors to `.copied` for both `.copy-btn` and `.share-btn`
+- Files changed: src/components/CopyButton.svelte (new), src/App.svelte, src/style.css
+- **Learnings:** Svelte 5 `class:copied` directive adds/removes a CSS class reactively — cleaner than imperative `setAttribute`/`removeAttribute`. `HTMLButtonAttributes` from `svelte/elements` + `...rest` spread is the idiomatic way to forward native button props. `ReturnType<typeof setTimeout>` avoids needing `NodeJS.Timeout` or `number` type ambiguity.
+
+## Task - lscolors-input
+- Created `src/components/LscolorsInput.svelte` — extracts BSD LSCOLORS input field from App.svelte
+- Props: `value` ($bindable), `error` (string), `oninput` (() => void), `class` (CSS passthrough), `...rest` spread via `HTMLAttributes<HTMLDivElement>`
+- Renders: `.field.field--lscolors` wrapper, label with hint, input maxlength=22, CopyButton, error div with role=alert + aria-live
+- Updated App.svelte: imported LscolorsInput, replaced 25-line inline markup with `<LscolorsInput bind:value={lscolorsValue} error={lscolorsError} oninput={handleLscolorsInput} />`
+- Files changed: src/components/LscolorsInput.svelte (new), src/App.svelte
+- **Learnings:** For wrapper components (div root, not input root), use `HTMLAttributes<HTMLDivElement>` not `HTMLInputAttributes`. `bind:value` on the component prop + `bind:value` on internal `<input>` chains correctly. `{oninput}` shorthand passes parent callback directly to child input element. dprint/markup_fmt auto-reformats `$props()` destructuring to multiline when >3 props.
+
+## Task - ls-colors-input
+- Created `src/components/GnuInput.svelte` — GNU LS_COLORS textarea component mirroring BsdInput pattern
+- Props: `value` ($bindable), `error` (string), `oninput` (() => void), `class` (CSS passthrough), `...rest` spread via `HTMLAttributes<HTMLDivElement>`
+- Renders: `.field.field--ls-colors` wrapper, label with hint, textarea rows=4, CopyButton, error div with role=alert + aria-live
+- Renamed `LscolorsInput.svelte` → `BsdInput.svelte` and `LsColorsInput.svelte` → `GnuInput.svelte` to fix TS case-collision diagnostic
+- Updated App.svelte imports: `BsdInput` / `GnuInput` + template references
+- Removed `forceConsistentCasingInFileNames: false` workaround (no longer needed)
+- Files changed: src/components/GnuInput.svelte (new), src/components/BsdInput.svelte (renamed), src/App.svelte
+- **Learnings:** TypeScript's casing diagnostic fires even with `forceConsistentCasingInFileNames: false` when both files are globbed via `include`. Avoid case-only filename collisions entirely — use semantically distinct names. `bind:value` on `<textarea>` works identically to `<input>`.
+
+## Task - swap-control
+- Created `src/components/SwapControl.svelte` — purely presentational swap button + direction label
+- Props: `icon` (string), `label` (string), `onswap` (() => void), `class` (CSS passthrough), `...rest` via `HTMLAttributes<HTMLDivElement>`
+- Replaced 11-line inline swap markup in App.svelte with single `<SwapControl icon={swapIcon} label={directionLabel} onswap={handleSwap} />`
+- Files changed: src/components/SwapControl.svelte (new), src/App.svelte
+- **Learnings:** Purely presentational components (no internal state) are the simplest extraction — just props + template. `onswap` callback prop directly wired to `onclick` on internal button. dprint auto-formats new .svelte files on first `bun run format`.
+
+## Task - share-button
+- Created `src/components/ShareButton.svelte` — thin wrapper around CopyButton for share permalink
+- Props: `url` (string), `class` (CSS passthrough), `...rest` via `HTMLAttributes<HTMLDivElement>`
+- Renders: `<div class="share-row">` containing `<CopyButton text={url} label="Share link" class="share-btn">`
+- Replaced 8-line inline CopyButton+wrapper in App.svelte with single `<ShareButton url={window.location.href} />`
+- Removed CopyButton import from App.svelte (no longer directly used — ShareButton imports it internally)
+- Files changed: src/components/ShareButton.svelte (new), src/App.svelte
+- **Learnings:** Wrapper components that compose existing components are trivial — just move props + markup. The wrapper owns the `share-row` div + `share-btn` class, keeping App.svelte cleaner. CopyButton's `...rest` spread already handled `aria-label` forwarding.
+
+## Task - preview-table
+- Created `src/components/preview.ts` — pure logic helpers extracted from App.svelte: `SLOT_SAMPLE_TEXT`, `DEFAULT_FG`, `DEFAULT_BG`, `bsdCharsToSgr()`, `formatHex()`
+- Created `src/components/PreviewTable.svelte` — renders 11-slot preview table with colored swatches, BSD chars, SGR codes, hex colors
+- Props: `cssMap` (Map | null), `bsdMap` (Map | null), `class` (CSS passthrough)
+- Component handles null maps via `{#if}` guard — renders nothing when no valid LSCOLORS
+- Updated App.svelte: removed ~65 lines of inline preview logic/template, replaced with single `<PreviewTable cssMap={previewCssMap} bsdMap={previewBsdMap} />`
+- Removed unused imports from App.svelte: `BSD_SLOTS`, `BSD_SLOT_LABELS`, `bsdCharToAnsiFg`, `bsdCharToAnsiBg`
+- Files changed: src/components/PreviewTable.svelte (new), src/components/preview.ts (new), src/App.svelte
+- **Learnings:** Separating pure helpers (preview.ts) from the Svelte template (PreviewTable.svelte) keeps the component focused on rendering and makes helpers independently testable. The `{#if}` null guard on the component level is cleaner than the caller checking — encapsulates the "show/hide" logic. `{@const}` bindings in `{#each}` blocks provide per-iteration derived values without needing reactive state.
+
+## Task - hash-permalink
+- Hash integration was mostly done in `app-root` task; this task fixed ShareButton reactivity
+- Made share URL reactive: extracted `hashFragment` ($derived.by) and `permalinkUrl` ($derived) from inline $effect logic
+- `$effect` now just calls `history.replaceState(null, '', permalinkUrl)` — single responsibility
+- ShareButton receives `permalinkUrl` instead of static `window.location.href` — updates when hash changes
+- Files changed: src/App.svelte
+- **Learnings:** `window.location.href` in a Svelte template expression is NOT reactive — it captures once at render time. To keep share URLs in sync with hash state, derive the full URL from the same reactive state the $effect uses. Extracting `$derived` intermediates (`hashFragment`, `permalinkUrl`) from `$effect` body deduplicates logic and makes values available to both the effect and the template.
+
+## Task - styles-migration
+- Split `src/style.css` (442→96 lines): kept only CSS reset, `:root` custom properties, `html`/`body` base, `#app` layout, shared `input`/`textarea` base styles, global responsive `@media` queries
+- Added scoped `<style>` blocks to all 7 `.svelte` files:
+  - **App.svelte**: header, h1, .arrow, .subtitle, .repo-link, .converter + responsive
+  - **CopyButton.svelte**: .copy-btn states (hover, focus-visible, copied) + responsive touch sizing
+  - **BsdInput.svelte**: .field, label, .label-hint, .input-row, .lscolors-input (letter-spacing), .error + responsive
+  - **GnuInput.svelte**: .field, label, .label-hint, .input-row, .error + responsive
+  - **SwapControl.svelte**: .swap-container, .swap-btn, .swap-icon, .direction + responsive touch sizing
+  - **ShareButton.svelte**: .share-row, `:global(.share-btn)` for child CopyButton padding/copied state
+  - **PreviewTable.svelte**: all .preview-* selectors, .th-label/.th-hex for responsive column hiding
+- Replaced `#swap-btn` ID selector with `.swap-btn` class selector (scoped)
+- Replaced `#lscolors-input` ID selector with `.lscolors-input` class selector (scoped) — kept `id` attr for `<label for=>`
+- Replaced `nth-child(2)`/`nth-child(6)` column-hiding selectors with explicit `.th-label`/`.th-hex` classes
+- Used `:global(.share-btn)` in ShareButton to style child CopyButton's rendered element
+- Shared field/label/input-row/error styles duplicated in BsdInput + GnuInput (small, avoids global coupling)
+- Files changed: src/style.css, src/App.svelte, src/components/{CopyButton,BsdInput,GnuInput,SwapControl,ShareButton,PreviewTable}.svelte
+- **Learnings:** Svelte scoped styles can't reach into child components — use `:global()` within a scoped parent selector (`.share-row :global(.share-btn)`) to style child output. Duplicating small shared styles across 2 components is acceptable vs. global coupling when there's no common ancestor component. ID selectors should become class selectors in scoped styles — IDs are only needed for `<label for=>` accessibility, not styling.
+
+## Task - delete-old-ui
+- Deleted `src/ui/dom.ts` (getElementById wrappers — replaced by Svelte bindings)
+- Deleted `src/ui/clipboard.ts` (absorbed into CopyButton.svelte)
+- Deleted `src/ui/preview.ts` (replaced by PreviewTable.svelte + preview.ts helpers)
+- Deleted `src/index.ts` (dead barrel — private package, never imported)
+- Verified zero remaining imports reference any deleted file
+- All type exports in `types.ts` still actively used — no cleanup needed
+- `src/ui/` retains only `hash.ts` + `hash.test.ts` (still live)
+- Files deleted: src/ui/dom.ts, src/ui/clipboard.ts, src/ui/preview.ts, src/index.ts (249 lines removed)
+- **Learnings:** Clean deletion — Svelte migration absorbed all imperative DOM/clipboard/preview code into components. The barrel (`index.ts`) was dead code from day one (`"private": true` package). All types.ts exports remain in use by pure logic layer + Svelte components.
+
+## Task - format-all
+- Ran `dprint fmt .` — zero changes needed (codebase already formatted)
+- Ran `dprint check .` — passes clean
+- Disabled Biome formatter in `biome.json` (`"enabled": false`) to eliminate false positive format disagreements with dprint (trailing commas in JSONC, CSS font-stack line wrapping)
+- `bun run lint` (biome check) now passes clean — zero lint issues, zero format noise
+- Added `exclude: ['src/**/*.svelte.test.ts', 'src/**/*.svelte.spec.ts']` to `vitest.config.ts` so `vitest run` skips browser-only tests (those need the browser project from `component-tests` task)
+- `bun run check` (svelte-check): 0 errors, 0 warnings
+- `bun run build`: succeeds (53KB JS, 6.3KB CSS)
+- 107 unit tests pass
+- Files changed: biome.json, vitest.config.ts
+- **Learnings:** Biome formatter was `"enabled": true` despite project convention saying dprint is authoritative — config/convention mismatch. Disabling it properly eliminates the format conflict noise in `biome check`. Vitest default runner picks up `.svelte.test.ts` files that need browser pool — exclude them at config level, not via CLI flags.
+
+## Task - component-tests
+- Expanded `src/App.svelte.test.ts` from 1-test stub to 7 tests: heading, BSD input, GNU textarea, swap button, share button, conversion, error display
+- Created `src/components/CopyButton.svelte.test.ts` (4 tests): render label, custom label, clipboard copy + feedback, timeout reset
+- Created `src/components/BsdInput.svelte.test.ts` (7 tests): label, maxlength, value display, oninput callback, error show/hide, copy button
+- Created `src/components/GnuInput.svelte.test.ts` (7 tests): label, rows attr, value display, oninput callback, error show/hide, copy button
+- Created `src/components/SwapControl.svelte.test.ts` (4 tests): button render, icon, label, onswap callback
+- Created `src/components/PreviewTable.svelte.test.ts` (6 tests): null map renders nothing, table present, 11 rows, slot labels, sample text, slot codes
+- Total: 35 browser component tests across 6 files, all passing in chromium headless
+- Installed Playwright chromium browser (needed by @vitest/browser-playwright)
+- Files changed: src/App.svelte.test.ts (expanded), src/components/{CopyButton,BsdInput,GnuInput,SwapControl,PreviewTable}.svelte.test.ts (new)
+- **Learnings:** `getByLabelText(/LSCOLORS/)` matches both the `<input>` AND the CopyButton with `aria-label="Copy LSCOLORS value"` — use `getByRole('textbox', { name: /LSCOLORS/ })` for unambiguous input selection. `getByRole('alert')` can't find elements with `hidden` attribute (removed from a11y tree) — use `getByText` or DOM queries instead. `navigator.clipboard` is read-only in real browsers — use `vi.stubGlobal` not `Object.assign`. PreviewTable's `role="presentation"` table makes `getByRole('presentation')` match all descendant elements — use `container.querySelectorAll` for CSS selector queries. `render()` returns `{ container }` for direct DOM access.
+
+## Task - e2e-tests
+- Wrote 19 Playwright e2e tests in `e2e/demo.test.ts` covering all PRD requirements
+- Tests: page load (h1, inputs visible), LSCOLORS→LS_COLORS conversion, LS_COLORS→LSCOLORS conversion, invalid input error display, swap button direction toggle + re-conversion, copy buttons exist, share button copies URL with Copied! feedback, permalink round-trip (both directions + hash update on input), preview table (11 rows, colored swatches, slot codes, hidden when empty), responsive layout at 375px
+- Updated `playwright.config.ts`: `npm run` → `bun run`, simplified config
+- Files changed: e2e/demo.test.ts (expanded from 1 to 19 tests), playwright.config.ts
+- **Learnings:** LSCOLORS↔LS_COLORS conversion is NOT lossless (includes extra or/mi defaults, different bold/color mappings) — don't assert exact converted values in e2e tests. Use regex patterns (`/di=\d/`, `/^[a-hA-Hx]{22}$/`) to verify conversion happened without coupling to specific output. `vite.config.ts` base is dynamic (`process.env.GITHUB_ACTIONS`) — don't hardcode `/lscolors/` baseURL in playwright config. Clipboard permission grant via `context.grantPermissions(['clipboard-read', 'clipboard-write'])` needed for share button e2e test.
+
+## Task - update-agents-md
+- Rewrote AGENTS.md from pre-migration (imperative DOM) to post-migration (Svelte 5) codebase
+- Updated STRUCTURE tree: removed src/ui/dom.ts, clipboard.ts, preview.ts, index.ts; added App.svelte, components/*.svelte, svelte.config.js, e2e/
+- Updated WHERE TO LOOK table: added App.svelte state/handlers, all 6 component locations, preview.ts helpers, e2e tests
+- Added Svelte 5 CONVENTIONS section: runes, props pattern, class prop, child styling, mount pattern, reactive URLs, svelte-check
+- Updated Testing section: split into unit tests, component tests (vitest-browser-svelte), e2e (Playwright), combined
+- Updated COMMANDS: added check, test:unit, test:e2e
+- Updated ANTI-PATTERNS: removed re-entrant guard (Svelte handles it), added no bare :global(), no ID selectors in scoped styles
+- Updated NOTES: removed dead code / init() references, added pure logic layer note, svelte-shims.d.ts note, dynamic Vite base note
+- Files changed: AGENTS.md
+- **Learnings:** AGENTS.md should mirror the actual file tree exactly. The commit hash in the header is a reference point, not auto-updated. Keep the "pure logic layer" note prominent — it's the key architectural boundary that survives across UI rewrites.
+
+## Task - verify-all
+- Ran full verification: build, svelte-check, lint, format, unit tests, component browser tests, e2e tests
+- **Fixed:** Deleted `vitest.config.ts` — it was overriding `vite.config.ts`'s `projects` config, preventing browser component tests from running via `bun run test:unit`. The workspace projects (server + client/browser) are properly defined in `vite.config.ts`.
+- **Fixed:** Simplified `test` script in package.json from `npm run test:unit -- --run && vitest run && npm run test:e2e` to `vitest run && npm run test:e2e` (was running vitest twice)
+- **Fixed:** Deleted leftover `src/demo.spec.ts` stub (trivial 1+2=3 test, not part of real test suite)
+- Final counts: 142 vitest tests (107 unit + 35 component browser), 19 Playwright e2e tests — all passing
+- All checks clean: build (53KB JS, 6.3KB CSS), svelte-check (0 errors), lint (35 files, 0 issues), format (0 changes)
+- Files changed: vitest.config.ts (deleted), src/demo.spec.ts (deleted), package.json (test script fix)
+- **Learnings:** `vitest.config.ts` takes precedence over `vite.config.ts` for vitest — if projects are defined in `vite.config.ts`, a separate `vitest.config.ts` will shadow them. Keep vitest config consolidated in one file.

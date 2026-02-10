@@ -4,18 +4,30 @@
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"lib": ["ESNext", "ES2023.Array", "DOM", "DOM.Iterable"],
-		"strict": true,
 		"noUncheckedIndexedAccess": true,
 		"exactOptionalPropertyTypes": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		"isolatedModules": true,
-		"skipLibCheck": true,
 		"outDir": "dist",
 		"allowImportingTsExtensions": true,
 		"emitDeclarationOnly": true,
-		"composite": true
+		"composite": true,
+		/**
+      Svelte Preprocess cannot figure out whether you have a value or a type, so tell TypeScript
+      to enforce using `import type` instead of `import` for Types.
+     */
+		"verbatimModuleSyntax": true,
+		/**
+      To have warnings/errors of the Svelte compiler at the correct position,
+      enable source maps by default.
+     */
+		"sourceMap": true,
+
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true
 	},
-	"include": ["src"]
+	"include": ["src/**/*"]
 }

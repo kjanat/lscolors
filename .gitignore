@@ -366,3 +366,5 @@ Temporary Items
 *.icloud
 
 # End of https://gitignore.kjanat.com/api/python,node,linux,macos
+# Playwright
+test-results
