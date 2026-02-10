@@ -1,0 +1,71 @@
+<script lang="ts">
+import {
+	BSD_SLOTS,
+	BSD_SLOT_LABELS,
+	type BsdSlot,
+	type BsdSlotColors,
+	type SlotCssColors,
+} from '../types.ts';
+import {
+	SLOT_SAMPLE_TEXT,
+	DEFAULT_FG,
+	DEFAULT_BG,
+	bsdCharsToSgr,
+	formatHex,
+} from './preview.ts';
+
+interface Props {
+	cssMap: Map<BsdSlot, SlotCssColors> | null;
+	bsdMap: Map<BsdSlot, BsdSlotColors> | null;
+	class?: string;
+}
+
+const { cssMap, bsdMap, class: className = '' }: Props = $props();
+</script>
+
+{#if cssMap !== null && bsdMap !== null}
+	<div class="preview {className}">
+		<table class="preview-table" role="presentation">
+			<thead>
+				<tr>
+					<th>Slot</th>
+					<th>Label</th>
+					<th>Preview</th>
+					<th>BSD</th>
+					<th title="Select Graphic Rendition — ANSI escape codes for text formatting, colors, and styles in terminal emulators">
+						SGR
+					</th>
+					<th>Hex</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each BSD_SLOTS as slot (slot)}
+					{@const colors = cssMap.get(slot)}
+					{@const bsdColors = bsdMap.get(slot)}
+					{@const fg = colors?.fg ?? DEFAULT_FG}
+					{@const bg = colors?.bg ?? DEFAULT_BG}
+					{@const bsdFg = bsdColors?.fg ?? 'x'}
+					{@const bsdBg = bsdColors?.bg ?? 'x'}
+					<tr>
+						<td class="preview-slot">{slot}</td>
+						<td class="preview-label">{BSD_SLOT_LABELS[slot]}</td>
+						<td class="preview-sample">
+							<span
+								class="preview-swatch"
+								style:color={fg}
+								style:background-color={bg}
+							>
+								{SLOT_SAMPLE_TEXT[slot]}
+							</span>
+						</td>
+						<td class="preview-code">{bsdFg}{bsdBg}</td>
+						<td class="preview-code">{bsdCharsToSgr(bsdFg, bsdBg) || '—'}</td>
+						<td class="preview-hex">
+							{formatHex(colors?.fg ?? null, colors?.bg ?? null)}
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+{/if}

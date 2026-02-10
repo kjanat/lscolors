@@ -1,7 +1,5 @@
 <script lang="ts">
 import {
-	BSD_SLOTS,
-	BSD_SLOT_LABELS,
 	type BsdSlot,
 	type BsdSlotColors,
 	type SlotCssColors,
@@ -11,45 +9,14 @@ import {
 	lsColorsToLscolors,
 	lscolorsToCssMap,
 } from './convert.ts';
-import { parseLscolors, bsdCharToAnsiFg, bsdCharToAnsiBg } from './bsd.ts';
+import { parseLscolors } from './bsd.ts';
 import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
 import BsdInput from './components/BsdInput.svelte';
 import GnuInput from './components/GnuInput.svelte';
+import PreviewTable from './components/PreviewTable.svelte';
 import ShareButton from './components/ShareButton.svelte';
 import SwapControl from './components/SwapControl.svelte';
 import './style.css';
-
-const SLOT_SAMPLE_TEXT: Readonly<Record<BsdSlot, string>> = {
-	di: 'Documents/',
-	ln: 'link -> target',
-	so: 'app.sock',
-	pi: 'fifo.pipe',
-	ex: 'run.sh',
-	bd: 'sda1',
-	cd: 'tty0',
-	su: 'passwd',
-	sg: 'crontab',
-	tw: 'tmp/',
-	ow: 'shared/',
-};
-const DEFAULT_FG = '#e0e0e0';
-const DEFAULT_BG = 'transparent';
-
-function bsdCharsToSgr(fg: string, bg: string): string {
-	const parts: number[] = [];
-	const fgCode = bsdCharToAnsiFg(fg);
-	const bgCode = bsdCharToAnsiBg(bg);
-	if (fgCode !== null) parts.push(fgCode);
-	if (bgCode !== null) parts.push(bgCode);
-	return parts.map(String).join(';');
-}
-
-function formatHex(fg: string | null, bg: string | null): string {
-	const fgStr = fg ?? '—';
-	const bgStr = bg ?? '—';
-	if (bgStr === '—') return fgStr;
-	return `${fgStr} / ${bgStr}`;
-}
 
 // --- State ---
 
@@ -223,48 +190,5 @@ $effect(() => {
 	<ShareButton url={window.location.href} />
 
 	<!-- Preview table: 11 BSD slots -->
-	{#if lscolorsValue.length === 22 && previewCssMap !== null && previewBsdMap !== null}
-		<div class="preview">
-			<table class="preview-table" role="presentation">
-				<thead>
-					<tr>
-						<th>Slot</th>
-						<th>Label</th>
-						<th>Preview</th>
-						<th>BSD</th>
-						<th title="Select Graphic Rendition — ANSI escape codes for text formatting, colors, and styles in terminal emulators">
-							SGR
-						</th>
-						<th>Hex</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each BSD_SLOTS as slot (slot)}
-						{@const colors = previewCssMap.get(slot)}
-						{@const bsdColors = previewBsdMap.get(slot)}
-						{@const fg = colors?.fg ?? DEFAULT_FG}
-						{@const bg = colors?.bg ?? DEFAULT_BG}
-						{@const bsdFg = bsdColors?.fg ?? 'x'}
-						{@const bsdBg = bsdColors?.bg ?? 'x'}
-						<tr>
-							<td class="preview-slot">{slot}</td>
-							<td class="preview-label">{BSD_SLOT_LABELS[slot]}</td>
-							<td class="preview-sample">
-								<span
-									class="preview-swatch"
-									style:color={fg}
-									style:background-color={bg}
-								>{SLOT_SAMPLE_TEXT[slot]}</span>
-							</td>
-							<td class="preview-code">{bsdFg}{bsdBg}</td>
-							<td class="preview-code">{bsdCharsToSgr(bsdFg, bsdBg) || '—'}</td>
-							<td class="preview-hex">
-								{formatHex(colors?.fg ?? null, colors?.bg ?? null)}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	{/if}
+	<PreviewTable cssMap={previewCssMap} bsdMap={previewBsdMap} />
 </main>

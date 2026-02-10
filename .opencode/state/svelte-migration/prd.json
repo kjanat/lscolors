@@ -55,7 +55,7 @@
 			"id": "preview-table",
 			"title": "Extract PreviewTable component",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Port 162-line imperative preview.ts to src/components/PreviewTable.svelte. Props: cssMap (Map<BsdSlot, SlotCssColors> | null), lscolorsValue (string). Keep SLOT_SAMPLE_TEXT, bsdCharsToSgr(), formatHex() helpers in a separate .ts file (pure logic separation). Template: {#each BSD_SLOTS as slot} with slot code, label, sample swatch, BSD chars, SGR codes, hex colors. Done when: all 11 slots render with correct colors, codes, labels."
 		},
 		{

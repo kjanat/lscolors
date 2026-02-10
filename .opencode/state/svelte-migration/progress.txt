@@ -113,3 +113,13 @@ Started: 2026-02-10
 - Removed CopyButton import from App.svelte (no longer directly used — ShareButton imports it internally)
 - Files changed: src/components/ShareButton.svelte (new), src/App.svelte
 - **Learnings:** Wrapper components that compose existing components are trivial — just move props + markup. The wrapper owns the `share-row` div + `share-btn` class, keeping App.svelte cleaner. CopyButton's `...rest` spread already handled `aria-label` forwarding.
+
+## Task - preview-table
+- Created `src/components/preview.ts` — pure logic helpers extracted from App.svelte: `SLOT_SAMPLE_TEXT`, `DEFAULT_FG`, `DEFAULT_BG`, `bsdCharsToSgr()`, `formatHex()`
+- Created `src/components/PreviewTable.svelte` — renders 11-slot preview table with colored swatches, BSD chars, SGR codes, hex colors
+- Props: `cssMap` (Map | null), `bsdMap` (Map | null), `class` (CSS passthrough)
+- Component handles null maps via `{#if}` guard — renders nothing when no valid LSCOLORS
+- Updated App.svelte: removed ~65 lines of inline preview logic/template, replaced with single `<PreviewTable cssMap={previewCssMap} bsdMap={previewBsdMap} />`
+- Removed unused imports from App.svelte: `BSD_SLOTS`, `BSD_SLOT_LABELS`, `bsdCharToAnsiFg`, `bsdCharToAnsiBg`
+- Files changed: src/components/PreviewTable.svelte (new), src/components/preview.ts (new), src/App.svelte
+- **Learnings:** Separating pure helpers (preview.ts) from the Svelte template (PreviewTable.svelte) keeps the component focused on rendering and makes helpers independently testable. The `{#if}` null guard on the component level is cleaner than the caller checking — encapsulates the "show/hide" logic. `{@const}` bindings in `{#each}` blocks provide per-iteration derived values without needing reactive state.
