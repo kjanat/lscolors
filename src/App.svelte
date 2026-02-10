@@ -13,6 +13,7 @@ import {
 } from './convert.ts';
 import { parseLscolors, bsdCharToAnsiFg, bsdCharToAnsiBg } from './bsd.ts';
 import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
+import CopyButton from './components/CopyButton.svelte';
 import './style.css';
 
 const SLOT_SAMPLE_TEXT: Readonly<Record<BsdSlot, string>> = {
@@ -155,22 +156,6 @@ function handleSwap(): void {
 	}
 }
 
-// --- Clipboard copy ---
-
-function copyToClipboard(event: MouseEvent, text: string): void {
-	const target = event.currentTarget;
-	if (!(target instanceof HTMLButtonElement)) return;
-	const original = target.textContent;
-	void navigator.clipboard.writeText(text).then(() => {
-		target.textContent = 'Copied!';
-		target.setAttribute('data-copied', 'true');
-		setTimeout(() => {
-			target.textContent = original;
-			target.removeAttribute('data-copied');
-		}, 1200);
-	});
-}
-
 // --- URL hash sync ---
 
 $effect(() => {
@@ -228,14 +213,7 @@ $effect(() => {
 					bind:value={lscolorsValue}
 					oninput={handleLscolorsInput}
 				>
-				<button
-					type="button"
-					class="copy-btn"
-					aria-label="Copy LSCOLORS value"
-					onclick={(e) => copyToClipboard(e, lscolorsValue)}
-				>
-					Copy
-				</button>
+				<CopyButton text={lscolorsValue} aria-label="Copy LSCOLORS value" />
 			</div>
 			<div
 				class="error"
@@ -274,14 +252,7 @@ $effect(() => {
 					bind:value={lsColorsValue}
 					oninput={handleLsColorsInput}
 				></textarea>
-				<button
-					type="button"
-					class="copy-btn"
-					aria-label="Copy LS_COLORS value"
-					onclick={(e) => copyToClipboard(e, lsColorsValue)}
-				>
-					Copy
-				</button>
+				<CopyButton text={lsColorsValue} aria-label="Copy LS_COLORS value" />
 			</div>
 			<div
 				class="error"
@@ -296,14 +267,12 @@ $effect(() => {
 
 	<!-- Share permalink -->
 	<div class="share-row">
-		<button
-			type="button"
+		<CopyButton
+			text={window.location.href}
+			label="Share link"
 			class="share-btn"
 			aria-label="Copy permalink to clipboard"
-			onclick={(e) => copyToClipboard(e, window.location.href)}
-		>
-			Share link
-		</button>
+		/>
 	</div>
 
 	<!-- Preview table: 11 BSD slots -->

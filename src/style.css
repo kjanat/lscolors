@@ -192,7 +192,7 @@ textarea {
 	outline-offset: 2px;
 }
 
-.copy-btn[data-copied="true"] {
+.copy-btn.copied {
 	color: #66bb6a;
 	border-color: #66bb6a;
 }
@@ -280,7 +280,7 @@ textarea {
 	outline-offset: 2px;
 }
 
-.share-btn[data-copied="true"] {
+.share-btn.copied {
 	color: #66bb6a;
 	border-color: #66bb6a;
 }

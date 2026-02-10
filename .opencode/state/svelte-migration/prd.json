@@ -20,7 +20,7 @@
 			"id": "copy-button",
 			"title": "Extract CopyButton component",
 			"category": "feature",
-			"passes": false,
+			"passes": true,
 			"details": "Create reusable src/components/CopyButton.svelte. Replaces src/ui/clipboard.ts logic. Props: text (string), label? (default 'Copy'), class? (CSS passthrough). Internal state: copied boolean, 1200ms timeout to reset. Use class:copied toggle instead of data-copied attribute. Done when: copies text to clipboard, shows 'Copied!' feedback, resets after timeout."
 		},
 		{
