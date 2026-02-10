@@ -54,7 +54,9 @@ export function ansiBgToBsdChar(code: number): string {
 
 export function parseLscolors(lscolors: string): Map<BsdSlot, BsdSlotColors> {
 	if (lscolors.length !== 22) {
-		throw new Error(`LSCOLORS must be exactly 22 chars (got ${String(lscolors.length)})`);
+		throw new Error(
+			`LSCOLORS must be exactly 22 chars (got ${String(lscolors.length)})`,
+		);
 	}
 	const map = new Map<BsdSlot, BsdSlotColors>();
 	for (let i = 0; i < BSD_SLOTS.length; i++) {
@@ -81,7 +83,9 @@ export function stringifyLscolors(map: Map<BsdSlot, BsdSlotColors>): string {
 		out += (v?.fg ?? 'x') + (v?.bg ?? 'x');
 	}
 	if (out.length !== 22) {
-		throw new Error(`Internal error: produced invalid LSCOLORS length (${String(out.length)})`);
+		throw new Error(
+			`Internal error: produced invalid LSCOLORS length (${String(out.length)})`,
+		);
 	}
 	return out;
 }

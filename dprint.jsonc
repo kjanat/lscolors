@@ -1,0 +1,67 @@
+{
+	"useTabs": true,
+	"indentWidth": 2,
+	"newLineKind": "lf",
+	"biome": { "quoteStyle": "single" },
+	"json": {
+		"jsonTrailingCommaFiles": [
+			"**/.vscode/*.json",
+			"**/.zed/*.json",
+			"**/tsconfig*.json",
+			"!**/biome.jsonc",
+		],
+	},
+	"markdown": { "textWrap": "always", "emphasisKind": "asterisks" },
+	"toml": {
+		"comment.forceLeadingSpace": false,
+		"useTabs": false,
+		"indentWidth": 2,
+	},
+	"dockerfile": { "associations": ["Dockerfile", "Dockerfile.*"] },
+	"ruff": {
+		"preview": true,
+		"lineLength": 88,
+		"indentWidth": 4,
+		"indentStyle": "space",
+	},
+	"jupyter": {},
+	"malva": {},
+	"markup": { "html.void.selfClosing": false, "formatComments": true },
+	"yaml": { "printWidth": 160 },
+	"graphql": {},
+	"exec": {
+		"commands": [
+			{
+				"command": "tombi format - --stdin-filename {{file_path}}",
+				"exts": ["toml"],
+			},
+			{
+				"command": "shfmt -i 0 -ln bash -bn -ci --filename {{file_path}}",
+				"exts": ["sh", "bash"],
+			},
+			{
+				"command": "just --dump --justfile {{file_path}}",
+				"fileNames": ["justfile"],
+			},
+			{
+				"command": "rustfmt",
+				"exts": ["rs"],
+			},
+		],
+	},
+	"excludes": ["**/node_modules", "**/*-lock.json", "**/.venv", "**/bun.lock*"],
+	"plugins": [
+		"https://plugins.dprint.dev/json-0.21.1.wasm",
+		"https://plugins.dprint.dev/markdown-0.21.1.wasm",
+		"https://plugins.dprint.dev/toml-0.7.0.wasm",
+		"https://plugins.dprint.dev/dockerfile-0.3.3.wasm",
+		"https://plugins.dprint.dev/ruff-0.7.0.wasm",
+		"https://plugins.dprint.dev/jupyter-0.2.1.wasm",
+		"https://plugins.dprint.dev/g-plane/malva-v0.15.2.wasm",
+		"https://plugins.dprint.dev/g-plane/markup_fmt-v0.25.3.wasm",
+		"https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
+		"https://plugins.dprint.dev/g-plane/pretty_graphql-v0.2.3.wasm",
+		"https://plugins.dprint.dev/exec-0.6.0.json@a054130d458f124f9b5c91484833828950723a5af3f8ff2bd1523bd47b83b364",
+		"https://plugins.dprint.dev/biome-0.11.13.wasm",
+	],
+}

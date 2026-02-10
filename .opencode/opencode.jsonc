@@ -4,6 +4,7 @@
 		"dprint": {
 			"command": [
 				"dprint",
+				"-c=dprint.jsonc",
 				"fmt",
 				"$FILE",
 			],
@@ -26,7 +27,7 @@
 				"Dockerfile.*",
 			],
 			"environment": {
-				"DPRINT_CONFIG_DISCOVERY": "global",
+				"DPRINT_CONFIG_DISCOVERY": "false",
 			},
 		},
 	},

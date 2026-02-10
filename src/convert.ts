@@ -16,7 +16,14 @@ import {
 } from './bsd.ts';
 import { parseLsColors, stringifyLsColors } from './gnu.ts';
 import { parseSgr } from './sgr.ts';
-import { BSD_SLOTS, type BsdSlot, type BsdSlotColors, type CssColor, type SlotCssColors, type Style } from './types.ts';
+import {
+	BSD_SLOTS,
+	type BsdSlot,
+	type BsdSlotColors,
+	type CssColor,
+	type SlotCssColors,
+	type Style,
+} from './types.ts';
 
 // -------------------------
 // LSCOLORS → LS_COLORS
@@ -114,7 +121,9 @@ function ansiStyleToBsdFgChar(st: Style): string {
 	const bold = st.codes.includes(1);
 
 	// Last-wins: use findLast so later codes override earlier ones (e.g. 34;35 → magenta)
-	const basic = st.codes.findLast((c) => (c >= 30 && c <= 37) || (c >= 90 && c <= 97));
+	const basic = st.codes.findLast(
+		(c) => (c >= 30 && c <= 37) || (c >= 90 && c <= 97),
+	);
 	if (basic !== undefined) {
 		let ch = ansiFgToBsdChar(basic);
 		// Bold (01) → uppercase BSD char (e.g. bold blue 01;34 → 'E')
@@ -145,7 +154,9 @@ function ansiStyleToBsdFgChar(st: Style): string {
 
 function ansiStyleToBsdBgChar(st: Style): string {
 	// Last-wins: use findLast so later codes override earlier ones
-	const basic = st.codes.findLast((c) => (c >= 40 && c <= 47) || (c >= 100 && c <= 107));
+	const basic = st.codes.findLast(
+		(c) => (c >= 40 && c <= 47) || (c >= 100 && c <= 107),
+	);
 	if (basic !== undefined) return ansiBgToBsdChar(basic);
 
 	// Truecolor (48;2;r;g;b) → approximate to nearest 16-color
@@ -227,7 +238,10 @@ export function xterm256ToRgb(idx: number): readonly [number, number, number] {
 }
 
 // ANSI fg code → approximate RGB for distance calculation
-const ANSI16_FG_CANDIDATES: readonly (readonly [number, readonly [number, number, number]])[] = [
+const ANSI16_FG_CANDIDATES: readonly (readonly [
+	number,
+	readonly [number, number, number],
+])[] = [
 	[30, [0, 0, 0]],
 	[31, [205, 0, 0]],
 	[32, [0, 205, 0]],
@@ -296,7 +310,9 @@ function rgbToHex(r: number, g: number, b: number): string {
 }
 
 /** Parse an LSCOLORS string and return CSS colors for each BSD slot */
-export function lscolorsToCssMap(lscolors: string): Map<BsdSlot, SlotCssColors> {
+export function lscolorsToCssMap(
+	lscolors: string,
+): Map<BsdSlot, SlotCssColors> {
 	const slots = parseLscolors(lscolors);
 	const result = new Map<BsdSlot, SlotCssColors>();
 	for (const [slot, colors] of slots) {

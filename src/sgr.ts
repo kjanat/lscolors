@@ -29,7 +29,12 @@ export function parseSgr(s: string): Style {
 		if (n === undefined) continue;
 
 		// 38;5;<idx> = 256-color foreground
-		if (n === 38 && nums[i + 1] === 5 && nums[i + 2] !== undefined && Number.isFinite(nums[i + 2])) {
+		if (
+			n === 38 &&
+			nums[i + 1] === 5 &&
+			nums[i + 2] !== undefined &&
+			Number.isFinite(nums[i + 2])
+		) {
 			fg256 = nums[i + 2];
 			i += 2;
 			continue;
@@ -39,14 +44,25 @@ export function parseSgr(s: string): Style {
 			const r = nums[i + 2];
 			const g = nums[i + 3];
 			const b = nums[i + 4];
-			if (n === 38 && nums[i + 1] === 2 && r !== undefined && g !== undefined && b !== undefined) {
+			if (
+				n === 38 &&
+				nums[i + 1] === 2 &&
+				r !== undefined &&
+				g !== undefined &&
+				b !== undefined
+			) {
 				fgRgb = [r, g, b];
 				i += 4;
 				continue;
 			}
 		}
 		// 48;5;<idx> = 256-color background
-		if (n === 48 && nums[i + 1] === 5 && nums[i + 2] !== undefined && Number.isFinite(nums[i + 2])) {
+		if (
+			n === 48 &&
+			nums[i + 1] === 5 &&
+			nums[i + 2] !== undefined &&
+			Number.isFinite(nums[i + 2])
+		) {
 			bg256 = nums[i + 2];
 			i += 2;
 			continue;
@@ -56,7 +72,13 @@ export function parseSgr(s: string): Style {
 			const r = nums[i + 2];
 			const g = nums[i + 3];
 			const b = nums[i + 4];
-			if (n === 48 && nums[i + 1] === 2 && r !== undefined && g !== undefined && b !== undefined) {
+			if (
+				n === 48 &&
+				nums[i + 1] === 2 &&
+				r !== undefined &&
+				g !== undefined &&
+				b !== undefined
+			) {
 				bgRgb = [r, g, b];
 				i += 4;
 				continue;

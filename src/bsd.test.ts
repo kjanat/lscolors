@@ -20,12 +20,18 @@ describe('parseLscolors', () => {
 	});
 
 	it('throws on wrong length', () => {
-		expect(() => parseLscolors('abc')).toThrow('LSCOLORS must be exactly 22 chars');
-		expect(() => parseLscolors('')).toThrow('LSCOLORS must be exactly 22 chars');
+		expect(() => parseLscolors('abc')).toThrow(
+			'LSCOLORS must be exactly 22 chars',
+		);
+		expect(() => parseLscolors('')).toThrow(
+			'LSCOLORS must be exactly 22 chars',
+		);
 	});
 
 	it('throws on invalid BSD chars', () => {
-		expect(() => parseLscolors('zxfxcxdxbxegedabagacad')).toThrow('Invalid BSD color char');
+		expect(() => parseLscolors('zxfxcxdxbxegedabagacad')).toThrow(
+			'Invalid BSD color char',
+		);
 	});
 
 	it('parses all-default LSCOLORS', () => {

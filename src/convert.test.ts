@@ -251,21 +251,27 @@ describe('lsColorsToLscolors', () => {
 describe('round-trip', () => {
 	it('LSCOLORS -> LS_COLORS -> LSCOLORS preserves basic colors', () => {
 		const original = 'exfxcxdxbxegedabagacad';
-		const lsColors = lscolorsToLsColors(original, { includeExtraDefaults: false });
+		const lsColors = lscolorsToLsColors(original, {
+			includeExtraDefaults: false,
+		});
 		const roundTripped = lsColorsToLscolors(lsColors);
 		expect(roundTripped).toBe(original);
 	});
 
 	it('round-trips all-default', () => {
 		const original = 'xxxxxxxxxxxxxxxxxxxxxx';
-		const lsColors = lscolorsToLsColors(original, { includeExtraDefaults: false });
+		const lsColors = lscolorsToLsColors(original, {
+			includeExtraDefaults: false,
+		});
 		const roundTripped = lsColorsToLscolors(lsColors);
 		expect(roundTripped).toBe(original);
 	});
 
 	it('round-trips bright colors', () => {
 		const original = 'ExFxCxDxBxEGEDABAGACAD';
-		const lsColors = lscolorsToLsColors(original, { includeExtraDefaults: false });
+		const lsColors = lscolorsToLsColors(original, {
+			includeExtraDefaults: false,
+		});
 		const roundTripped = lsColorsToLscolors(lsColors);
 		expect(roundTripped).toBe(original);
 	});
@@ -436,6 +442,8 @@ describe('lscolorsToCssMap', () => {
 	});
 
 	it('throws on invalid LSCOLORS length', () => {
-		expect(() => lscolorsToCssMap('abc')).toThrow('LSCOLORS must be exactly 22 chars');
+		expect(() => lscolorsToCssMap('abc')).toThrow(
+			'LSCOLORS must be exactly 22 chars',
+		);
 	});
 });

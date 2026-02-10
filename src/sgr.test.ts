@@ -77,7 +77,9 @@ describe('stringifySgr', () => {
 	});
 
 	it('appends 256-color sequences', () => {
-		expect(stringifySgr({ codes: [1], fg256: 200, bg256: 235 })).toBe('1;38;5;200;48;5;235');
+		expect(stringifySgr({ codes: [1], fg256: 200, bg256: 235 })).toBe(
+			'1;38;5;200;48;5;235',
+		);
 	});
 
 	it('round-trips through parseSgr', () => {
@@ -87,8 +89,9 @@ describe('stringifySgr', () => {
 	});
 
 	it('appends truecolor sequences', () => {
-		expect(stringifySgr({ codes: [1], fgRgb: [255, 0, 0], bgRgb: [0, 0, 255] }))
-			.toBe('1;38;2;255;0;0;48;2;0;0;255');
+		expect(
+			stringifySgr({ codes: [1], fgRgb: [255, 0, 0], bgRgb: [0, 0, 255] }),
+		).toBe('1;38;2;255;0;0;48;2;0;0;255');
 	});
 
 	it('round-trips truecolor through parseSgr', () => {

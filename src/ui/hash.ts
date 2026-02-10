@@ -27,7 +27,8 @@ function encodeFragmentValue(value: string): string {
 
 export function encodeHash(state: HashState): string {
 	if (state.value === '') return '';
-	const key = state.source === 'lscolors-to-ls_colors' ? 'lscolors' : 'ls_colors';
+	const key =
+		state.source === 'lscolors-to-ls_colors' ? 'lscolors' : 'ls_colors';
 	return `#${key}=${encodeFragmentValue(state.value)}`;
 }
 

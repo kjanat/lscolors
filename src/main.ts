@@ -1,7 +1,20 @@
 import { lsColorsToLscolors, lscolorsToLsColors } from './convert.ts';
 import { copyToClipboard } from './ui/clipboard.ts';
-import { errorMessage, getButton, getDiv, getInput, getSpan, getTextarea, setError } from './ui/dom.ts';
-import { type Direction, decodeHash, encodeHash, type HashState } from './ui/hash.ts';
+import {
+	errorMessage,
+	getButton,
+	getDiv,
+	getInput,
+	getSpan,
+	getTextarea,
+	setError,
+} from './ui/dom.ts';
+import {
+	type Direction,
+	decodeHash,
+	encodeHash,
+	type HashState,
+} from './ui/hash.ts';
 import { renderPreview } from './ui/preview.ts';
 import './style.css';
 
@@ -41,13 +54,18 @@ function init(): void {
 
 	/** Update the URL hash to reflect current state (without triggering hashchange) */
 	function updateHash(): void {
-		const state: HashState = direction === 'lscolors-to-ls_colors'
-			? { source: direction, value: lscolorsInput.value }
-			: { source: direction, value: lsColorsInput.value };
+		const state: HashState =
+			direction === 'lscolors-to-ls_colors'
+				? { source: direction, value: lscolorsInput.value }
+				: { source: direction, value: lsColorsInput.value };
 		const hash = encodeHash(state);
 		if (hash === '') {
 			// Remove hash without scrolling
-			history.replaceState(null, '', window.location.pathname + window.location.search);
+			history.replaceState(
+				null,
+				'',
+				window.location.pathname + window.location.search,
+			);
 		} else {
 			history.replaceState(null, '', hash);
 		}
@@ -129,9 +147,10 @@ function init(): void {
 	// --- Swap button ---
 
 	swapBtn.addEventListener('click', () => {
-		direction = direction === 'lscolors-to-ls_colors'
-			? 'ls_colors-to-lscolors'
-			: 'lscolors-to-ls_colors';
+		direction =
+			direction === 'lscolors-to-ls_colors'
+				? 'ls_colors-to-lscolors'
+				: 'lscolors-to-ls_colors';
 		updateDirectionLabel();
 		setError(lscolorsError, '');
 		setError(lsColorsError, '');

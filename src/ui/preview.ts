@@ -51,14 +51,20 @@ function formatHex(fg: string | null, bg: string | null): string {
  * Build or update the color preview grid.
  * Reads the current LSCOLORS value and renders 11 colored swatches.
  */
-export function renderPreview(container: HTMLDivElement, lscolorsValue: string): void {
+export function renderPreview(
+	container: HTMLDivElement,
+	lscolorsValue: string,
+): void {
 	container.innerHTML = '';
 
 	if (lscolorsValue === '' || lscolorsValue.length !== 22) {
 		return;
 	}
 
-	let cssMap: Map<BsdSlot, { readonly fg: string | null; readonly bg: string | null }>;
+	let cssMap: Map<
+		BsdSlot,
+		{ readonly fg: string | null; readonly bg: string | null }
+	>;
 	let bsdMap: Map<BsdSlot, { readonly fg: string; readonly bg: string }>;
 	try {
 		cssMap = lscolorsToCssMap(lscolorsValue);

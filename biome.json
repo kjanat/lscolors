@@ -7,10 +7,12 @@
 		"defaultBranch": "master"
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache", "!!**/webpages"]
+		"includes": ["**", "!!**/dist", "!!**/.jj", "!!**/coverage", "!!**/.*_cache"],
+		"ignoreUnknown": true
 	},
 	"formatter": {
-		"enabled": false
+		"enabled": true,
+		"indentStyle": "tab"
 	},
 	"linter": {
 		"enabled": true,
@@ -21,7 +23,9 @@
 			"project": "recommended"
 		}
 	},
-	"javascript": {},
+	"javascript": { "formatter": { "quoteStyle": "single" } },
+	"html": { "experimentalFullSupportEnabled": true },
+	"css": { "parser": { "tailwindDirectives": true } },
 	"assist": {
 		"enabled": true,
 		"actions": {

@@ -2,25 +2,29 @@
 
 export function getInput(id: string): HTMLInputElement {
 	const el = document.getElementById(id);
-	if (!(el instanceof HTMLInputElement)) throw new Error(`Missing <input> #${id}`);
+	if (!(el instanceof HTMLInputElement))
+		throw new Error(`Missing <input> #${id}`);
 	return el;
 }
 
 export function getTextarea(id: string): HTMLTextAreaElement {
 	const el = document.getElementById(id);
-	if (!(el instanceof HTMLTextAreaElement)) throw new Error(`Missing <textarea> #${id}`);
+	if (!(el instanceof HTMLTextAreaElement))
+		throw new Error(`Missing <textarea> #${id}`);
 	return el;
 }
 
 export function getButton(id: string): HTMLButtonElement {
 	const el = document.getElementById(id);
-	if (!(el instanceof HTMLButtonElement)) throw new Error(`Missing <button> #${id}`);
+	if (!(el instanceof HTMLButtonElement))
+		throw new Error(`Missing <button> #${id}`);
 	return el;
 }
 
 export function getSpan(id: string): HTMLSpanElement {
 	const el = document.getElementById(id);
-	if (!(el instanceof HTMLSpanElement)) throw new Error(`Missing <span> #${id}`);
+	if (!(el instanceof HTMLSpanElement))
+		throw new Error(`Missing <span> #${id}`);
 	return el;
 }
 

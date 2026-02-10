@@ -1,5 +1,16 @@
 /** Two-letter BSD file type key */
-export type BsdSlot = 'di' | 'ln' | 'so' | 'pi' | 'ex' | 'bd' | 'cd' | 'su' | 'sg' | 'tw' | 'ow';
+export type BsdSlot =
+	| 'di'
+	| 'ln'
+	| 'so'
+	| 'pi'
+	| 'ex'
+	| 'bd'
+	| 'cd'
+	| 'su'
+	| 'sg'
+	| 'tw'
+	| 'ow';
 
 /** Ordered list of all 11 BSD slots */
 export const BSD_SLOTS: readonly BsdSlot[] = [
