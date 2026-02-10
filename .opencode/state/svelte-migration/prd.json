@@ -111,7 +111,7 @@
 			"id": "verify-all",
 			"title": "Final verification pass",
 			"category": "polish",
-			"passes": false,
+			"passes": true,
 			"details": "Full verification: bun run test (unit + component + e2e all pass), bun run lint (Biome clean), bun run check (svelte-check zero errors), bun run build (production build succeeds), bun run format (no changes). Manual checks: both conversion directions work, swap toggles, copy/share buttons, hash restore, preview table 11 slots, responsive at 480px/375px, a11y attrs (role=alert, aria-live, aria-label, aria-hidden). Done when: all automated checks pass, AGENTS.md is current."
 		}
 	]

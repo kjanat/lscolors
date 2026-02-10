@@ -42,7 +42,7 @@ Started: 2026-02-10
 - **dprint + Svelte**: markup_fmt plugin already formats `.svelte` files out of the box. No extra config needed.
 - **svelte-check**: runs via `bun run check`. Uses `--tsconfig ./tsconfig.json`.
 - **Mount pattern**: `mount(App, { target })` where target is `<div id="app">`. Component renders `<main>` (no id) inside it. CSS `#app` styles apply to the wrapper div.
-- **Vitest exclude**: `vitest.config.ts` excludes `*.svelte.test.ts` / `*.svelte.spec.ts` from default runner (browser-only tests). The `component-tests` task will add a browser project config.
+- **Vitest config**: All vitest config (including `projects` for server + client/browser) lives in `vite.config.ts`. No separate `vitest.config.ts` — it would shadow `vite.config.ts`'s projects.
 - **Component naming**: Avoid case-only filename collisions (e.g. `LscolorsInput` vs `LsColorsInput`). TS `forceConsistentCasingInFileNames` can't fully suppress this. Use semantically distinct names: `BsdInput.svelte` / `GnuInput.svelte`.
 - **Reactive URLs**: `window.location.href` is NOT reactive in Svelte templates. To pass a URL that updates with hash state, derive it via `$derived` from the same reactive values the hash `$effect` uses.
 - **Scoped styles + child components**: Svelte scoped styles can't pierce child components. Use `.parent :global(.child-class)` to style rendered child output. Avoid bare `:global()` — always scope it under a local parent selector.
@@ -207,3 +207,13 @@ Started: 2026-02-10
 - Updated NOTES: removed dead code / init() references, added pure logic layer note, svelte-shims.d.ts note, dynamic Vite base note
 - Files changed: AGENTS.md
 - **Learnings:** AGENTS.md should mirror the actual file tree exactly. The commit hash in the header is a reference point, not auto-updated. Keep the "pure logic layer" note prominent — it's the key architectural boundary that survives across UI rewrites.
+
+## Task - verify-all
+- Ran full verification: build, svelte-check, lint, format, unit tests, component browser tests, e2e tests
+- **Fixed:** Deleted `vitest.config.ts` — it was overriding `vite.config.ts`'s `projects` config, preventing browser component tests from running via `bun run test:unit`. The workspace projects (server + client/browser) are properly defined in `vite.config.ts`.
+- **Fixed:** Simplified `test` script in package.json from `npm run test:unit -- --run && vitest run && npm run test:e2e` to `vitest run && npm run test:e2e` (was running vitest twice)
+- **Fixed:** Deleted leftover `src/demo.spec.ts` stub (trivial 1+2=3 test, not part of real test suite)
+- Final counts: 142 vitest tests (107 unit + 35 component browser), 19 Playwright e2e tests — all passing
+- All checks clean: build (53KB JS, 6.3KB CSS), svelte-check (0 errors), lint (35 files, 0 issues), format (0 changes)
+- Files changed: vitest.config.ts (deleted), src/demo.spec.ts (deleted), package.json (test script fix)
+- **Learnings:** `vitest.config.ts` takes precedence over `vite.config.ts` for vitest — if projects are defined in `vite.config.ts`, a separate `vitest.config.ts` will shadow them. Keep vitest config consolidated in one file.
