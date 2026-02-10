@@ -4,7 +4,10 @@ import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	base: process.env.GITHUB_ACTIONS === 'true' ? '/lscolors/' : '',
+	base:
+		process.env.GITHUB_ACTIONS === 'true'
+			? `/${process.env.GITHUB_REPOSITORY!.split('/')[1]}/`
+			: '/',
 	build: { outDir: 'dist' },
 	server: { allowedHosts: ['propc-manjaro'] },
 	test: {
