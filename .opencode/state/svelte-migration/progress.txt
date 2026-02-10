@@ -8,7 +8,7 @@ Started: 2026-02-10
 - **Vite base**: `/lscolors/` for GitHub Pages
 - **VCS**: jj (colocated with git), default branch `master`
 - **Formatter**: dprint (run `bun run format`)
-- **Linter**: Biome (run `bun run lint`), formatter disabled in Biome
+- **Linter**: Biome (run `bun run lint`), formatter `"enabled": false` in biome.json (dprint is authoritative)
 - **Testing**: Vitest, co-located *.test.ts, BDD style (describe/it), explicit imports
 - **Pure logic layer**: bsd.ts, gnu.ts, sgr.ts, convert.ts, types.ts — NEVER modify
 - **Svelte**: Svelte 5 runes ($state, $derived, $effect), no SvelteKit
@@ -42,7 +42,7 @@ Started: 2026-02-10
 - **dprint + Svelte**: markup_fmt plugin already formats `.svelte` files out of the box. No extra config needed.
 - **svelte-check**: runs via `bun run check`. Uses `--tsconfig ./tsconfig.json`.
 - **Mount pattern**: `mount(App, { target })` where target is `<div id="app">`. Component renders `<main>` (no id) inside it. CSS `#app` styles apply to the wrapper div.
-- **Pre-existing issues**: Biome formatter disagrees with dprint on trailing commas in jsonc and CSS transition shorthand formatting. Test project filtering (`--project server`) doesn't work with vitest 4 inline project config.
+- **Vitest exclude**: `vitest.config.ts` excludes `*.svelte.test.ts` / `*.svelte.spec.ts` from default runner (browser-only tests). The `component-tests` task will add a browser project config.
 - **Component naming**: Avoid case-only filename collisions (e.g. `LscolorsInput` vs `LsColorsInput`). TS `forceConsistentCasingInFileNames` can't fully suppress this. Use semantically distinct names: `BsdInput.svelte` / `GnuInput.svelte`.
 - **Reactive URLs**: `window.location.href` is NOT reactive in Svelte templates. To pass a URL that updates with hash state, derive it via `$derived` from the same reactive values the hash `$effect` uses.
 - **Scoped styles + child components**: Svelte scoped styles can't pierce child components. Use `.parent :global(.child-class)` to style rendered child output. Avoid bare `:global()` — always scope it under a local parent selector.
@@ -163,3 +163,15 @@ Started: 2026-02-10
 - `src/ui/` retains only `hash.ts` + `hash.test.ts` (still live)
 - Files deleted: src/ui/dom.ts, src/ui/clipboard.ts, src/ui/preview.ts, src/index.ts (249 lines removed)
 - **Learnings:** Clean deletion — Svelte migration absorbed all imperative DOM/clipboard/preview code into components. The barrel (`index.ts`) was dead code from day one (`"private": true` package). All types.ts exports remain in use by pure logic layer + Svelte components.
+
+## Task - format-all
+- Ran `dprint fmt .` — zero changes needed (codebase already formatted)
+- Ran `dprint check .` — passes clean
+- Disabled Biome formatter in `biome.json` (`"enabled": false`) to eliminate false positive format disagreements with dprint (trailing commas in JSONC, CSS font-stack line wrapping)
+- `bun run lint` (biome check) now passes clean — zero lint issues, zero format noise
+- Added `exclude: ['src/**/*.svelte.test.ts', 'src/**/*.svelte.spec.ts']` to `vitest.config.ts` so `vitest run` skips browser-only tests (those need the browser project from `component-tests` task)
+- `bun run check` (svelte-check): 0 errors, 0 warnings
+- `bun run build`: succeeds (53KB JS, 6.3KB CSS)
+- 107 unit tests pass
+- Files changed: biome.json, vitest.config.ts
+- **Learnings:** Biome formatter was `"enabled": true` despite project convention saying dprint is authoritative — config/convention mismatch. Disabling it properly eliminates the format conflict noise in `biome check`. Vitest default runner picks up `.svelte.test.ts` files that need browser pool — exclude them at config level, not via CLI flags.

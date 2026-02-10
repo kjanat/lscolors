@@ -83,7 +83,7 @@
 			"id": "format-all",
 			"title": "Format entire codebase",
 			"category": "polish",
-			"passes": false,
+			"passes": true,
 			"details": "Run bun run format (dprint fmt .) across entire codebase. Ensure all .svelte files follow project conventions (tabs, single quotes, LF). If dprint can't handle .svelte, document the gap and manually ensure consistent formatting. Run bun run lint (biome check) and fix any issues. Done when: bun run format produces no changes, bun run lint passes clean."
 		},
 		{
