@@ -348,6 +348,17 @@ textarea {
 	white-space: nowrap;
 }
 
+.preview-code {
+	color: var(--fg-muted);
+	white-space: nowrap;
+}
+
+.preview-hex {
+	font-size: 0.7rem;
+	color: var(--fg-muted);
+	white-space: nowrap;
+}
+
 /* -------------------------
  * Responsive: narrow screens
  * ------------------------- */
@@ -384,8 +395,9 @@ textarea {
 		font-size: 1.2rem;
 	}
 
-	/* Preview table: hide label column, slot + preview only */
-	.preview-label {
+	/* Preview table: hide label + hex columns on narrow screens */
+	.preview-label,
+	.preview-hex {
 		display: none;
 	}
 
@@ -397,7 +409,8 @@ textarea {
 		font-size: 0.75rem;
 	}
 
-	.preview-table thead th:nth-child(2) {
+	.preview-table thead th:nth-child(2),
+	.preview-table thead th:nth-child(6) {
 		display: none;
 	}
 }

@@ -1,9 +1,11 @@
 /**
  * Color preview table rendering.
  *
- * Shows 11 BSD slots with sample filenames colored by their fg/bg settings.
+ * Shows 11 BSD slots with sample filenames colored by their fg/bg settings,
+ * plus the raw BSD char pair, GNU SGR codes, and hex colors.
  */
 
+import { bsdCharToAnsiBg, bsdCharToAnsiFg, parseLscolors } from '../bsd.ts';
 import { lscolorsToCssMap } from '../convert.ts';
 import { BSD_SLOT_LABELS, BSD_SLOTS, type BsdSlot } from '../types.ts';
 
@@ -27,6 +29,24 @@ const DEFAULT_FG = '#e0e0e0';
 /** Default background when BSD char is 'x' (transparent / terminal bg) */
 const DEFAULT_BG = 'transparent';
 
+/** Build SGR string from a BSD fg/bg char pair */
+function bsdCharsToSgr(fg: string, bg: string): string {
+	const parts: number[] = [];
+	const fgCode = bsdCharToAnsiFg(fg);
+	const bgCode = bsdCharToAnsiBg(bg);
+	if (fgCode !== null) parts.push(fgCode);
+	if (bgCode !== null) parts.push(bgCode);
+	return parts.map(String).join(';');
+}
+
+/** Format fg/bg hex colors as a compact string */
+function formatHex(fg: string | null, bg: string | null): string {
+	const fgStr = fg ?? '—';
+	const bgStr = bg ?? '—';
+	if (bgStr === '—') return fgStr;
+	return `${fgStr} / ${bgStr}`;
+}
+
 /**
  * Build or update the color preview grid.
  * Reads the current LSCOLORS value and renders 11 colored swatches.
@@ -39,8 +59,10 @@ export function renderPreview(container: HTMLDivElement, lscolorsValue: string):
 	}
 
 	let cssMap: Map<BsdSlot, { readonly fg: string | null; readonly bg: string | null }>;
+	let bsdMap: Map<BsdSlot, { readonly fg: string; readonly bg: string }>;
 	try {
 		cssMap = lscolorsToCssMap(lscolorsValue);
+		bsdMap = parseLscolors(lscolorsValue);
 	} catch {
 		return;
 	}
@@ -51,7 +73,7 @@ export function renderPreview(container: HTMLDivElement, lscolorsValue: string):
 
 	const thead = document.createElement('thead');
 	const headerRow = document.createElement('tr');
-	for (const text of ['Slot', 'Label', 'Preview']) {
+	for (const text of ['Slot', 'Label', 'Preview', 'BSD', 'SGR', 'Hex']) {
 		const th = document.createElement('th');
 		th.textContent = text;
 		headerRow.appendChild(th);
@@ -63,8 +85,11 @@ export function renderPreview(container: HTMLDivElement, lscolorsValue: string):
 
 	for (const slot of BSD_SLOTS) {
 		const colors = cssMap.get(slot);
+		const bsdColors = bsdMap.get(slot);
 		const fg = colors?.fg ?? DEFAULT_FG;
 		const bg = colors?.bg ?? DEFAULT_BG;
+		const bsdFg = bsdColors?.fg ?? 'x';
+		const bsdBg = bsdColors?.bg ?? 'x';
 
 		const tr = document.createElement('tr');
 
@@ -90,6 +115,24 @@ export function renderPreview(container: HTMLDivElement, lscolorsValue: string):
 		sampleSpan.style.backgroundColor = bg;
 		tdSample.appendChild(sampleSpan);
 		tr.appendChild(tdSample);
+
+		// BSD char pair cell
+		const tdBsd = document.createElement('td');
+		tdBsd.className = 'preview-code';
+		tdBsd.textContent = `${bsdFg}${bsdBg}`;
+		tr.appendChild(tdBsd);
+
+		// SGR codes cell
+		const tdSgr = document.createElement('td');
+		tdSgr.className = 'preview-code';
+		tdSgr.textContent = bsdCharsToSgr(bsdFg, bsdBg) || '—';
+		tr.appendChild(tdSgr);
+
+		// Hex colors cell
+		const tdHex = document.createElement('td');
+		tdHex.className = 'preview-hex';
+		tdHex.textContent = formatHex(colors?.fg ?? null, colors?.bg ?? null);
+		tr.appendChild(tdHex);
 
 		tbody.appendChild(tr);
 	}
