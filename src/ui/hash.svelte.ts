@@ -36,8 +36,8 @@ export function createHashSync(
 					window.location.search +
 					hashFragment;
 
-		if (url === lastAppliedUrl) return;
 		clearTimeout(timeout);
+		if (url === lastAppliedUrl) return;
 		timeout = setTimeout(() => {
 			lastAppliedUrl = url;
 			history.replaceState(null, '', url);
