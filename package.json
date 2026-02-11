@@ -1,9 +1,16 @@
 {
-	"name": "lscolors",
+	"name": "lscolors-site",
 	"version": "0.1.0",
 	"private": true,
+	"workspaces": [
+		".",
+		"packages/*"
+	],
 	"description": "Convert between macOS/BSD LSCOLORS and GNU LS_COLORS formats",
-	"repository": "github:kjanat/lscolors",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kjanat/lscolors.git"
+	},
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
@@ -15,24 +22,51 @@
 		"test:watch": "vitest",
 		"test:unit": "vitest run",
 		"test:e2e": "playwright test",
-		"check": "svelte-check --tsconfig ./tsconfig.json"
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"lscolors": "bun --filter './packages/cli/'",
+		"lscolors:publish": "bun publish --filter './packages/cli/' --access public --dry-run"
+	},
+	"dependencies": {
+		"dreamcli": "catalog:"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"@playwright/test": "catalog:",
+		"@sveltejs/vite-plugin-svelte": "catalog:",
+		"@types/node": "catalog:",
+		"@typescript/native-preview": "catalog:",
+		"@vitest/browser-playwright": "catalog:",
+		"@vitest/coverage-v8": "catalog:",
+		"playwright": "catalog:",
+		"svelte": "catalog:",
+		"svelte-check": "catalog:",
+		"typescript": "catalog:",
+		"vite": "catalog:",
+		"vite-plugin-devtools-json": "catalog:",
+		"vitest": "catalog:",
+		"vitest-browser-svelte": "catalog:"
+	},
+	"overrides": {
+		"dreamcli": "link:dreamcli"
+	},
+	"catalog": {
+		"dreamcli": "*",
 		"@biomejs/biome": "^2.3.14",
-		"@playwright/test": "^1.58.1",
+		"@playwright/test": "^1.58.2",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
-		"@types/node": "^25.2.2",
-		"@typescript/native-preview": "^7.0.0-dev.20260209.1",
+		"@types/node": "^25.2.3",
+		"@typescript/native-preview": "^7.0.0-dev.20260211.1",
 		"@vitest/browser-playwright": "^4.0.18",
 		"@vitest/coverage-v8": "^4.0.18",
-		"playwright": "^1.58.1",
-		"svelte": "^5.50.0",
+		"playwright": "^1.58.2",
+		"svelte": "^5.50.2",
 		"svelte-check": "^4.3.6",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1",
 		"vite-plugin-devtools-json": "^1.0.0",
 		"vitest": "^4.0.18",
-		"vitest-browser-svelte": "^2.0.2"
+		"vitest-browser-svelte": "^2.0.2",
+		"tsdown": "^0.20.3"
 	},
 	"packageManager": "bun@1.3.9",
 	"volta": {

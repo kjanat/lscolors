@@ -1,0 +1,43 @@
+{
+	"name": "lscolors-convert",
+	"version": "0.1.0",
+	"description": "Convert between macOS/BSD LSCOLORS and GNU LS_COLORS formats",
+	"type": "module",
+	"bin": {
+		"lscolors-convert": "./dist/cli.mjs"
+	},
+	"files": ["dist", "src/{cli,commands}.ts"],
+	"scripts": {
+		"build": "tsdown",
+		"test": "vitest run",
+		"prepublishOnly": "bun -b run build"
+	},
+	"keywords": [
+		"lscolors",
+		"ls_colors",
+		"terminal",
+		"ansi",
+		"colors",
+		"bsd",
+		"gnu",
+		"macos",
+		"converter"
+	],
+	"overrides": {
+		"dreamcli": "link:dreamcli"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kjanat/lscolors",
+		"directory": "packages/cli"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"dreamcli": "catalog:"
+	},
+	"devDependencies": {
+		"tsdown": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	}
+}
