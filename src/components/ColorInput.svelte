@@ -5,7 +5,7 @@ import CopyButton from './CopyButton.svelte';
 interface Props extends HTMLAttributes<HTMLDivElement> {
 	value: string;
 	error: string;
-	oninput: () => void;
+	oninput?: () => void;
 	label: string;
 	hint: string;
 	id: string;

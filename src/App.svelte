@@ -1,5 +1,4 @@
 <script lang="ts">
-import { onMount } from 'svelte';
 import {
 	type BsdSlot,
 	type BsdSlotColors,
@@ -11,50 +10,65 @@ import {
 	lscolorsToCssMap,
 } from './convert.ts';
 import { parseLscolors } from './bsd.ts';
-import { type Direction, encodeHash, decodeHash } from './ui/hash.ts';
+import { type Direction, decodeHash } from './ui/hash.ts';
+import { createHashSync, derivePermalinkUrl } from './ui/hash.svelte.ts';
 import ColorInput from './components/ColorInput.svelte';
 import PreviewTable from './components/PreviewTable.svelte';
 import ShareButton from './components/ShareButton.svelte';
 import SwapControl from './components/SwapControl.svelte';
 import './style.css';
 
-// --- State ---
+// --- Core state: direction + single source value ---
 
-let direction: Direction = $state('lscolors-to-ls_colors');
-let lscolorsValue: string = $state('');
-let lsColorsValue: string = $state('');
-let lscolorsError: string = $state('');
-let lsColorsError: string = $state('');
+const initial = decodeHash(window.location.hash);
+let direction: Direction = $state(initial?.source ?? 'lscolors-to-ls_colors');
+let sourceValue: string = $state(initial?.value ?? '');
 
-// --- Initialization from URL hash ---
-// Must remain client-only: decodeHash reads window.location.hash which
-// doesn't exist during SSR. onMount guarantees a browser environment.
+// --- Derived display values ---
 
-onMount(() => {
-	const initialHash = decodeHash(window.location.hash);
-	if (initialHash !== null) {
-		direction = initialHash.source;
-		if (initialHash.source === 'lscolors-to-ls_colors') {
-			lscolorsValue = initialHash.value;
-			try {
-				lsColorsValue = lscolorsToLsColors(initialHash.value);
-				lscolorsError = '';
-			} catch (e: unknown) {
-				lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
-			}
-		} else {
-			lsColorsValue = initialHash.value;
-			try {
-				lscolorsValue = lsColorsToLscolors(initialHash.value);
-				lsColorsError = '';
-			} catch (e: unknown) {
-				lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
-			}
-		}
+let lscolorsValue: string = $derived.by(() => {
+	if (direction === 'lscolors-to-ls_colors') return sourceValue;
+	if (sourceValue === '') return '';
+	try {
+		return lsColorsToLscolors(sourceValue);
+	} catch {
+		return '';
 	}
 });
 
-// --- Derived values ---
+let lsColorsValue: string = $derived.by(() => {
+	if (direction === 'ls_colors-to-lscolors') return sourceValue;
+	if (sourceValue === '') return '';
+	try {
+		return lscolorsToLsColors(sourceValue);
+	} catch {
+		return '';
+	}
+});
+
+// --- Derived errors (only the source field can have errors) ---
+
+let lscolorsError: string = $derived.by(() => {
+	if (direction !== 'lscolors-to-ls_colors' || sourceValue === '') return '';
+	try {
+		lscolorsToLsColors(sourceValue);
+		return '';
+	} catch (e: unknown) {
+		return e instanceof Error ? e.message : 'Invalid LSCOLORS';
+	}
+});
+
+let lsColorsError: string = $derived.by(() => {
+	if (direction !== 'ls_colors-to-lscolors' || sourceValue === '') return '';
+	try {
+		lsColorsToLscolors(sourceValue);
+		return '';
+	} catch (e: unknown) {
+		return e instanceof Error ? e.message : 'Invalid LS_COLORS';
+	}
+});
+
+// --- Derived UI labels ---
 
 let directionLabel: string = $derived(
 	direction === 'lscolors-to-ls_colors'
@@ -66,14 +80,14 @@ let swapIcon: string = $derived(
 	direction === 'lscolors-to-ls_colors' ? '↓' : '↑',
 );
 
+// --- Preview maps ---
+
 let previewMaps: {
 	readonly css: Map<BsdSlot, SlotCssColors> | null;
 	readonly bsd: Map<BsdSlot, BsdSlotColors> | null;
 } = $derived.by(() => {
 	if (lscolorsValue.length !== 22) return { css: null, bsd: null };
 	try {
-		// parseLscolors is called once here; lscolorsToCssMap calls it again
-		// internally, but both parse the same input — they succeed or fail together.
 		return {
 			css: lscolorsToCssMap(lscolorsValue),
 			bsd: parseLscolors(lscolorsValue),
@@ -83,85 +97,38 @@ let previewMaps: {
 	}
 });
 
-// --- Conversion handlers ---
+// --- Setters for function bindings ---
 
-function handleLscolorsInput(): void {
-	lscolorsError = '';
-	lsColorsError = '';
+function setBsdValue(value: string): void {
 	direction = 'lscolors-to-ls_colors';
-	try {
-		lsColorsValue = lscolorsToLsColors(lscolorsValue);
-	} catch (e: unknown) {
-		lsColorsValue = '';
-		lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
-	}
+	sourceValue = value;
 }
 
-function handleLsColorsInput(): void {
-	lsColorsError = '';
-	lscolorsError = '';
+function setGnuValue(value: string): void {
 	direction = 'ls_colors-to-lscolors';
-	try {
-		lscolorsValue = lsColorsToLscolors(lsColorsValue);
-	} catch (e: unknown) {
-		lscolorsValue = '';
-		lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
-	}
+	sourceValue = value;
 }
 
 // --- Direction swap ---
 
 function handleSwap(): void {
-	lscolorsError = '';
-	lsColorsError = '';
 	if (direction === 'lscolors-to-ls_colors') {
 		direction = 'ls_colors-to-lscolors';
-		try {
-			lscolorsValue = lsColorsToLscolors(lsColorsValue);
-		} catch (e: unknown) {
-			lscolorsValue = '';
-			lsColorsError = e instanceof Error ? e.message : 'Invalid LS_COLORS';
-		}
+		sourceValue = lsColorsValue;
 	} else {
 		direction = 'lscolors-to-ls_colors';
-		try {
-			lsColorsValue = lscolorsToLsColors(lscolorsValue);
-		} catch (e: unknown) {
-			lsColorsValue = '';
-			lscolorsError = e instanceof Error ? e.message : 'Invalid LSCOLORS';
-		}
+		sourceValue = lscolorsValue;
 	}
 }
 
 // --- URL hash sync ---
 
-let hashFragment: string = $derived.by(() => {
-	const sourceValue =
-		direction === 'lscolors-to-ls_colors' ? lscolorsValue : lsColorsValue;
-	return encodeHash({ source: direction, value: sourceValue });
-});
+let permalinkUrl: string = $derived(derivePermalinkUrl(direction, sourceValue));
 
-let permalinkUrl: string = $derived(
-	hashFragment === ''
-		? window.location.origin + window.location.pathname + window.location.search
-		: window.location.origin +
-				window.location.pathname +
-				window.location.search +
-				hashFragment,
+createHashSync(
+	() => direction,
+	() => sourceValue,
 );
-
-let hashTimeout: ReturnType<typeof setTimeout> | undefined;
-let lastAppliedUrl: string | undefined;
-
-$effect(() => {
-	const url = permalinkUrl;
-	if (url === lastAppliedUrl) return;
-	clearTimeout(hashTimeout);
-	hashTimeout = setTimeout(() => {
-		lastAppliedUrl = url;
-		history.replaceState(null, '', url);
-	}, 120);
-});
 </script>
 
 <main>
@@ -190,9 +157,8 @@ $effect(() => {
 	<div class="converter">
 		<!-- LSCOLORS input field -->
 		<ColorInput
-			bind:value={lscolorsValue}
+			bind:value={() => lscolorsValue, setBsdValue}
 			error={lscolorsError}
-			oninput={handleLscolorsInput}
 			label="LSCOLORS"
 			hint="BSD/macOS, 22 chars"
 			id="lscolors"
@@ -206,9 +172,8 @@ $effect(() => {
 
 		<!-- LS_COLORS textarea -->
 		<ColorInput
-			bind:value={lsColorsValue}
+			bind:value={() => lsColorsValue, setGnuValue}
 			error={lsColorsError}
-			oninput={handleLsColorsInput}
 			label="LS_COLORS"
 			hint="GNU/Linux, colon-delimited"
 			id="ls-colors"

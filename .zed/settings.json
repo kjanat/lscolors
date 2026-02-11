@@ -36,5 +36,22 @@
 				}
 			]
 		}
+	},
+	"lsp": {
+		"biome": {
+			"biome": {
+				"binary": {
+					"path": "./node_modules/.bin/biome",
+					"arguments": [
+						"lsp-proxy"
+					]
+				}
+			},
+			"settings": {
+				"enable_lsp_tasks": true,
+				"config_path": "./biome.json",
+				"require_config_file": true
+			}
+		}
 	}
 }
