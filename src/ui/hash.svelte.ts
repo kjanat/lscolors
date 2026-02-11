@@ -23,24 +23,23 @@ export function createHashSync(
 	let timeout: ReturnType<typeof setTimeout> | undefined;
 
 	$effect(() => {
+		if (typeof window === 'undefined') return;
 		const direction = getDirection();
 		const sourceValue = getSourceValue();
 		const hashFragment = encodeHash({ source: direction, value: sourceValue });
-		const url =
-			hashFragment === ''
-				? window.location.origin +
-					window.location.pathname +
-					window.location.search
-				: window.location.origin +
-					window.location.pathname +
-					window.location.search +
-					hashFragment;
+		const baseUrl =
+			window.location.origin +
+			window.location.pathname +
+			window.location.search;
+		const url = hashFragment === '' ? baseUrl : baseUrl + hashFragment;
 
 		clearTimeout(timeout);
 		if (url === lastAppliedUrl) return;
 		timeout = setTimeout(() => {
 			lastAppliedUrl = url;
-			history.replaceState(null, '', url);
+			if (typeof history !== 'undefined') {
+				history.replaceState(null, '', url);
+			}
 		}, debounceMs);
 
 		return () => {
@@ -58,16 +57,9 @@ export function derivePermalinkUrl(
 	direction: Direction,
 	sourceValue: string,
 ): string {
+	if (typeof window === 'undefined') return '';
 	const hashFragment = encodeHash({ source: direction, value: sourceValue });
-	if (hashFragment === '') {
-		return (
-			window.location.origin + window.location.pathname + window.location.search
-		);
-	}
-	return (
-		window.location.origin +
-		window.location.pathname +
-		window.location.search +
-		hashFragment
-	);
+	const baseUrl =
+		window.location.origin + window.location.pathname + window.location.search;
+	return hashFragment === '' ? baseUrl : baseUrl + hashFragment;
 }
