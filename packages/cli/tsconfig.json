@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ESNext", "ES2023.Array"],
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": false,
+		"customConditions": ["bun"],
+		"paths": {
+			"lscolors-site": ["../../src"],
+			"lscolors-site/*": ["../../src/*"]
+		}
+	},
+	"include": ["src", "*.config.ts"]
+}
