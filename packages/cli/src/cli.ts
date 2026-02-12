@@ -8,14 +8,24 @@
  *   gnu2bsd — convert GNU LS_COLORS to BSD LSCOLORS
  */
 
+import { name, version, description } from '../package.json' with {
+	type: 'json',
+};
 import { cli } from 'dreamcli';
-import { bsd2gnuCmd, gnu2bsdCmd } from './commands.ts';
+import { bsd2gnuCmd, gnu2bsdCmd } from './commands';
 
-cli('lscolors-convert')
-	.version('0.1.0')
-	.description(
-		'Convert between macOS/BSD LSCOLORS and GNU LS_COLORS terminal color formats',
-	)
+const ls = cli(name).packageJson({ inferName: true })
+	.version(version)
+	.description(description)
 	.command(bsd2gnuCmd)
 	.command(gnu2bsdCmd)
 	.run();
+
+ls.catch((err) => {
+	if (err instanceof Error) {
+		console.error(`Error: ${err.message}`);
+	} else {
+		console.error(`Error: ${String(err)}`);
+	}
+	process.exit(1);
+});

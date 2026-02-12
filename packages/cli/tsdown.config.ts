@@ -8,4 +8,5 @@ export default defineConfig({
 	minify: true,
 	noExternal: ['dreamcli'],
 	treeshake: true,
+	nodeProtocol: 'strip',
 });

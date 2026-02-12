@@ -26,15 +26,13 @@
       },
     },
     "packages/cli": {
-      "name": "lscolors",
+      "name": "lscolors-convert",
       "version": "0.1.0",
       "bin": {
-        "lscolors-convert": "./dist/cli.js",
-      },
-      "dependencies": {
-        "dreamcli": "catalog:",
+        "lscolors-convert": "./dist/cli.mjs",
       },
       "devDependencies": {
+        "dreamcli": "catalog:",
         "tsdown": "catalog:",
         "typescript": "catalog:",
         "vitest": "catalog:",
@@ -52,7 +50,7 @@
     "@typescript/native-preview": "^7.0.0-dev.20260211.1",
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
-    "dreamcli": "*",
+    "dreamcli": "kjanat/dreamcli",
     "playwright": "^1.58.2",
     "svelte": "^5.50.2",
     "svelte-check": "^4.3.6",
@@ -386,7 +384,7 @@
 
     "locate-character": ["locate-character@3.0.0", "", {}, "sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA=="],
 
-    "lscolors": ["lscolors@workspace:packages/cli"],
+    "lscolors-convert": ["lscolors-convert@workspace:packages/cli"],
 
     "magic-string": ["magic-string@0.30.21", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.5" } }, "sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ=="],
 

@@ -16,6 +16,7 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": false,
+		"customConditions": ["bun"],
 		"paths": {
 			"lscolors-site": ["../../src"],
 			"lscolors-site/*": ["../../src/*"]

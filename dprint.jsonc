@@ -47,6 +47,10 @@
 				"command": "rustfmt",
 				"exts": ["rs"],
 			},
+			{
+				"command": "bunx sort-package-json --stdin",
+				"fileNames": ["package.json"],
+			},
 		],
 	},
 	"excludes": [
